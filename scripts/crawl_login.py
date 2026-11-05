@@ -9,7 +9,7 @@ UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chr
 CLIENT_ID = "ZU7sPN-miLujMD95LfOQ453IB0AtjM8sMyvgJ9wCXEQ"
 SCOPE = "openid consent email tk_client age"
 MAX_FILES = int(os.environ.get("MAX_FILES", "400"))
-HOSTS = ("login.nvidia.com", "static-login.nvidia.com", "accounts.nvidia.com", "assets.nvidiagrid.net")
+HOSTS_SUFFIX = (".nvidia.com", ".nvgs.nvidia.com", ".nvidiagrid.net", ".geforcenow.com")
 
 jar = http.cookiejar.CookieJar()
 
@@ -70,19 +70,41 @@ def main():
     }
     url = "https://login.nvidia.com/authorize?" + urllib.parse.urlencode(q)
     chain, pages, api_hits = [], [], set()
-    for _ in range(15):
-        status, headers, body = fetch(url)
-        low = {k.lower(): v for k, v in headers.items()}
-        chain.append({"url": re.sub(r"(nonce|code_challenge)=[^&]+", r"\1=X", url), "status": status, "location": low.get("location"), "content-type": low.get("content-type"), "cookie-names": [c.name for c in jar]})
-        print(status, url[:120], "->", low.get("location"))
-        dest = save(url, body, low.get("content-type", ""))
-        if dest:
-            pages.append((url, low.get("content-type", ""), body))
-        loc = low.get("location")
-        if status in (301, 302, 303, 307, 308) and loc:
+
+    def redact(u):
+        return re.sub(r"(nonce|code_challenge|state|code)=[^&]+", r"\1=X", u)
+
+    def follow(url, data=None, headers=None):
+        for _ in range(20):
+            status, hdrs, body = fetch(url, data=data, headers=headers)
+            low = {k.lower(): v for k, v in hdrs.items()}
+            loc = low.get("location")
+            chain.append({"url": redact(url), "method": "POST" if data else "GET", "status": status, "location": redact(loc) if loc else None, "content-type": low.get("content-type"), "cookie-names": sorted({c.name for c in jar})})
+            print(status, "POST" if data else "GET", url[:110], "->", (loc or "")[:110])
+            if not (status in (301, 302, 303, 307, 308) and loc):
+                dest = save(url, body, low.get("content-type", ""))
+                if dest:
+                    pages.append((url, low.get("content-type", ""), body))
+                return url, status, body
+            if status in (302, 303, 301):
+                data = None
+                headers = {"Referer": url}
             url = urllib.parse.urljoin(url, loc)
-            continue
-        break
+        return url, 0, b""
+
+    url, status, body = follow(url)
+    sel = url
+    qs = urllib.parse.parse_qs(urllib.parse.urlparse(sel).query)
+    state = (qs.get("state") or [""])[0]
+    idps = (qs.get("idp_ids") or [""])[0].split()
+    idp = os.environ.get("IDP_ID") or (idps[0] if idps else "")
+    print("idp candidates:", len(idps), "using:", idp[:12])
+    if state and idp:
+        url, status, body = follow(
+            "https://login.nvidia.com/callback/provider",
+            data=urllib.parse.urlencode({"state": state, "idp_id": idp}).encode(),
+            headers={"Content-Type": "application/x-www-form-urlencoded", "Origin": "https://static-login.nvidia.com", "Referer": sel},
+        )
     start = url
     seen, q2, saved = set(), deque(), []
     for u, ct, b in pages:
@@ -121,7 +143,7 @@ def main():
             if f.startswith(("data:", "blob:", "javascript:", "mailto:", "#")):
                 continue
             nu = urllib.parse.urljoin(u, f)
-            if urllib.parse.urlparse(nu).netloc in HOSTS and nu.split("#")[0] not in seen:
+            if urllib.parse.urlparse(nu).netloc.endswith(HOSTS_SUFFIX) and nu.split("#")[0] not in seen:
                 q2.append((nu, "", None))
     os.makedirs(OUT, exist_ok=True)
     json.dump({"start": start, "chain": chain, "files": manifest, "api_candidates": sorted(api_hits)}, open(os.path.join(OUT, "_manifest.json"), "w"), indent=2)
