@@ -409,6 +409,8 @@ const EP = {
   poll: "/api/1/frontend/oauth/user/email/auth/poll",
   consent: "/api/1/frontend/oauth/user/consent",
   password: "/api/1/frontend/oauth/user/login/password",
+  skipFactorSetup: "/api/1/frontend/oauth/auth/factor/setup/skip",
+  skipPasskeySetup: "/api/1/frontend/oauth/passkey/setup/skip",
 };
 
 const $ = (id) => document.getElementById(id);
@@ -684,6 +686,12 @@ async function drive(mine) {
     last = page;
     if (repeats >= 2) throw new Error("NVIDIA kept returning the " + page + " step. Open the debug log.");
     if (page === "Finish") return finishStage(n.json);
+    if (page === "NFactorSetupSelect" || page === "PasskeyPromptSetup") {
+      const k = await api(page === "NFactorSetupSelect" ? EP.skipFactorSetup : EP.skipPasskeySetup, {});
+      if (!k.ok) throw apiError(k);
+      log("[auth] skipped optional security setup");
+      continue;
+    }
     if (page === "EnterPassword") { await passwordStage(mine); continue; }
     if (page === "NFactorChallengeSelect") { setWait("Contacting NVIDIA…", ""); await selectFactor(); continue; }
     if (page === "NFactorEmailAuthWait") { await waitForEmail(mine); continue; }
