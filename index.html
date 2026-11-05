@@ -430,29 +430,59 @@ const BASES = [
   "https://fastly.jsdelivr.net/gh/lotsacookie/Singuloxy@main/",
 ];
 
+const withTimeout = (p, ms, label) => { let t; return Promise.race([p, new Promise((_, rej) => { t = setTimeout(() => rej(new Error(label + " timed out")), ms); })]).finally(() => clearTimeout(t)); };
+
 async function loadSandstone(log) {
-  for (const base of BASES) {
-    try { return await import(base + DIST); } catch { log("[proxy] sandstone import failed", base); }
-  }
-  const code = await (await fetch("https://raw.githubusercontent.com/lotsacookie/Singuloxy/main/" + DIST)).text();
+  try { return await Promise.any(BASES.map((b) => withTimeout(import(b + DIST), 12000, "proxy script"))); }
+  catch { log("[proxy] CDN import failed, trying GitHub raw"); }
+  const r = await withTimeout(fetch("https://raw.githubusercontent.com/lotsacookie/Singuloxy/main/" + DIST), 12000, "GitHub raw");
+  const code = await r.text();
   return import(URL.createObjectURL(new Blob([code], { type: "text/javascript" })));
 }
 
-let ready = null;
+let ready = null, state = null, rotating = null;
+async function verifyWisp(libcurl) {
+  const t0 = performance.now();
+  const r = await withTimeout(libcurl.fetch("https://login.nvidia.com/.well-known/openid-configuration", { method: "GET", redirect: "manual" }), 10000, "proxy check");
+  await withTimeout(r.text(), 8000, "proxy check");
+  return Math.round(performance.now() - t0);
+}
+async function connectWisp(st, say, log) {
+  for (let i = 0; i < 4; i++) {
+    const wisp = await pickWisp(st.network, say, { exclude: st.tried, budgetMs: 12000 });
+    say("Checking proxy…");
+    try { const ms = await verifyWisp(st.libcurl); log("[proxy] wisp", String(wisp), ms + "ms"); st.wisp = String(wisp); return; }
+    catch (e) { log("[proxy] wisp failed check", String(wisp), (e && e.message) || e); bad.add(wisp); st.tried.push(wisp); }
+  }
+  throw new Error("No working proxy found. Reload to try again.");
+}
 function getProxy({ log = () => {}, say = () => {} } = {}) {
   return (ready ||= (async () => {
-    say("Loading proxy…");
+    const t0 = Date.now(), say2 = (t) => say(t + " (" + Math.round((Date.now() - t0) / 1000) + "s)");
+    say2("Loading proxy…");
     const sandstone = await loadSandstone(log);
     provisionalWisp(sandstone.network);
-    for (let i = 0; i < 300 && !sandstone.libcurl.ready; i++) await new Promise((r) => setTimeout(r, 100));
+    for (let i = 0; i < 150 && !sandstone.libcurl.ready; i++) await new Promise((r) => setTimeout(r, 100));
     if (!sandstone.libcurl.ready) throw new Error("libcurl did not load");
-    const wisp = await pickWisp(sandstone.network, say);
-    log("[proxy] wisp", String(wisp));
-    return { libcurl: sandstone.libcurl, network: sandstone.network, wisp: String(wisp) };
+    state = { libcurl: sandstone.libcurl, network: sandstone.network, wisp: "", tried: [] };
+    await connectWisp(state, say2, log);
+    return state;
   })().catch((e) => { ready = null; throw e; }));
 }
-
+async function rotateProxy(log = () => {}, say = () => {}) {
+  if (!state) return getProxy({ log, say });
+  if (rotating) return rotating;
+  rotating = (async () => {
+    log("[proxy] switching wisp");
+    if (state.wisp) { bad.add(state.wisp); state.tried.push(state.wisp); }
+    if (state.tried.length > 6) state.tried.length = 0;
+    await connectWisp(state, say, log);
+    return state;
+  })().finally(() => { rotating = null; });
+  return rotating;
+}
 window.__getProxy = getProxy;
+window.__rotateProxy = rotateProxy;
 
 const STARFLEET = "https://login.nvidia.com";
 const STATIC_LOGIN = "https://static-login.nvidia.com";
@@ -563,7 +593,7 @@ function storeCookies(url, r) {
   }
 }
 
-async function http(url, { method = "GET", headers = {}, body, follow = true, stopAt } = {}) {
+async function httpOnce(url, { method = "GET", headers = {}, body, follow = true, stopAt, timeout = 25000 } = {}) {
   const { libcurl } = await window.__getProxy({ log, say });
   const chain = [];
   let cur = url, m = method, b = body, h0 = { ...headers };
@@ -573,9 +603,9 @@ async function http(url, { method = "GET", headers = {}, body, follow = true, st
     if (ck) h.Cookie = ck;
     const init = { method: m, headers: h, redirect: "manual" };
     if (b !== undefined) init.body = b;
-    const r = await libcurl.fetch(cur, init);
+    const r = await withTimeout(libcurl.fetch(cur, init), timeout, "Request");
     storeCookies(cur, r);
-    const text = await r.text();
+    const text = await withTimeout(r.text(), timeout, "Response");
     const loc = r.headers.get("location");
     const abs = loc ? new URL(loc, cur).href : null;
     chain.push(r.status + " " + new URL(cur).host + new URL(cur).pathname);
@@ -592,6 +622,17 @@ async function http(url, { method = "GET", headers = {}, body, follow = true, st
     return { status: r.status, url: cur, text, location: abs, chain };
   }
   throw new Error("Too many redirects");
+}
+
+async function http(url, opts = {}) {
+  try { return await httpOnce(url, opts); }
+  catch (e) {
+    const m = String((e && e.message) || e), safe = /^(GET|HEAD|DELETE)$/i.test(opts.method || "GET") || /error code (6|7|35)\b/.test(m);
+    if (opts.noRetry || !safe || !/error code (6|7|28|35|52|55|56)\b|timed out|websocket|wisp/i.test(m)) throw e;
+    log("[proxy] request failed (" + m + "), switching proxy and retrying once");
+    await rotateProxy(log, say);
+    return httpOnce(url, opts);
+  }
 }
 
 let flow = null;
@@ -1127,11 +1168,18 @@ async function launch(g) {
     if (cfg.res === "auto") { const lo = Math.min(screen.width, screen.height) * (devicePixelRatio || 1), hi = Math.max(screen.width, screen.height) * (devicePixelRatio || 1); w = Math.min(1920, hi | 0) || 1920; h = Math.min(1080, lo | 0) || 1080; }
     else [w, h] = cfg.res.split("x").map(Number);
     const { startStream } = await import("./stream.js");
-    current = await startStream({
-      appId: g.vid || g.id, vpcId, strict: !!cfg.zone, deviceId: JARVIS_DEVICE, video: pv, log, status: st,
+    const mk = (vpc, strict) => startStream({
+      appId: g.vid || g.id, vpcId: vpc, strict, deviceId: JARVIS_DEVICE, video: pv, log, status: st,
       headers: () => gfnHeaders(token), http, getLibcurl: async () => (await window.__getProxy({ log, say })).libcurl,
       width: w, height: h, fps: Number(cfg.fps) || 60,
     });
+    try { current = await mk(vpcId, !!cfg.zone); }
+    catch (err) {
+      if (!(cfg.zone && /error code (6|7|28|35|52|56)\b|timed out|unreachable/i.test(String((err && err.message) || err)))) throw err;
+      log("[stream] chosen server unreachable, using nearest");
+      st("That server isn’t reachable from here. Using your nearest one…");
+      current = await mk(await findVpc(session), false);
+    }
   } catch (e) {
     log("[stream] launch failed", e.message || e);
     st("Couldn’t start the game: " + (e.message || e) + (/code 60|certificate/i.test(String(e.message)) ? " — that server isn’t reachable here; pick an NP- server in Settings." : ""));
@@ -1150,7 +1198,7 @@ async function closePlayer() {
 $("pstop").addEventListener("click", closePlayer);
 $("pfs").addEventListener("click", () => { const p = $("player"); (document.fullscreenElement ? document.exitFullscreen() : p.requestFullscreen()).catch(() => {}); });
 
-{ const d = $("log").closest("details"), b = document.createElement("button"); b.className = "btn ghost dbgbtn"; b.type = "button"; b.textContent = "Copy log"; b.onclick = () => copy(logLines.join("\n"), b); d.insertBefore(b, $("log")); d.querySelector("summary").textContent = "Debug log"; }
+{ const d = $("log").closest("details"), b = document.createElement("button"); b.className = "btn ghost dbgbtn"; b.type = "button"; b.textContent = "Copy log"; b.onclick = () => copy(logLines.join("\n"), b); d.insertBefore(b, $("log")); const sw = document.createElement("button"); sw.className = "btn ghost dbgbtn"; sw.type = "button"; sw.textContent = "Switch proxy"; sw.onclick = async () => { sw.disabled = true; try { await rotateProxy(log, say); } catch (e) { log("[proxy] switch failed", e.message || e); } sw.disabled = false; }; d.insertBefore(sw, $("log")); d.querySelector("summary").textContent = "Debug log"; }
 let libTimer = 0;
 const libSession = () => loadStore();
 $("lib-search").addEventListener("input", () => {
