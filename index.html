@@ -7,20 +7,22 @@
 <style>
 :root{--bg:#0b0d10;--card:#14181d;--line:#262c34;--ink:#f2f5f7;--dim:#98a2ad;--green:#76b900;--warn:#e6a23c;--danger:#ff6b6b}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-body{background:radial-gradient(1200px 600px at 50% -10%,#1b2a0b 0%,var(--bg) 60%);color:var(--ink);font:500 15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:grid;place-items:center;padding:16px;-webkit-font-smoothing:antialiased}
-.card{width:min(420px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 24px;display:none;flex-direction:column;gap:16px}
+html,body{min-height:100%}
+body{background:radial-gradient(1200px 600px at 50% -10%,#1b2a0b 0%,var(--bg) 60%);color:var(--ink);font:500 15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px;min-height:100vh;-webkit-font-smoothing:antialiased}
+main{width:min(420px,100%)}
+.card{width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 24px;display:none;flex-direction:column;gap:16px}
 .card.active{display:flex}
 h1{font-size:1.35rem;letter-spacing:.01em}
 h1 b{color:var(--green)}
 p{color:var(--dim)}
+input{width:100%;background:#0b0d10;border:1px solid var(--line);border-radius:12px;padding:13px 14px;color:var(--ink);font:inherit;outline:none}
+input:focus{border-color:var(--green)}
+input.otp{font:700 1.4rem/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.3em;text-align:center}
+form{display:flex;flex-direction:column;gap:14px}
 .btn{appearance:none;border:0;border-radius:12px;padding:13px 18px;font:inherit;font-weight:700;cursor:pointer;background:var(--green);color:#0b0d10;text-align:center;text-decoration:none;display:block}
 .btn:disabled{opacity:.6;cursor:wait}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
 .btn.ghost:hover{border-color:var(--dim)}
-.code{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#0b0d10;border:1px dashed var(--line);border-radius:12px;padding:14px 16px}
-.code span{font:700 1.6rem/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.18em}
-.code button{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 10px;font:inherit;cursor:pointer}
 .err{color:var(--danger);font-size:.9rem}
 .badge{display:inline-block;align-self:flex-start;border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:.8rem;color:var(--dim)}
 .badge.ok{color:var(--green);border-color:var(--green)}
@@ -30,27 +32,34 @@ p{color:var(--dim)}
 @keyframes s{to{transform:rotate(360deg)}}
 .row{display:flex;gap:10px}.row>*{flex:1}
 small{color:var(--dim)}
+details{width:min(420px,100%);color:var(--dim);font-size:.8rem}
+details summary{cursor:pointer;padding:4px 0}
+details pre{background:#0b0d10;border:1px solid var(--line);border-radius:10px;padding:10px;max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-all;margin:8px 0;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace}
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
 </style>
 </head>
 <body>
 <main>
 <section class="card active" id="boot"><div class="spin"></div><p id="boot-status" style="text-align:center">Loading…</p></section>
-<section class="card" id="signin">
+<section class="card" id="email-card">
 <h1>Singularity<b>NOW</b></h1>
-<p>Sign in to GeForce NOW with your NVIDIA account. You'll finish on NVIDIA's own page, where it asks for your email and sends you a verification code.</p>
-<p class="err" id="signin-error" hidden></p>
-<button class="btn" id="start">Sign in with NVIDIA</button>
-<small>Traffic to NVIDIA goes through the browser proxy.</small>
+<p>Sign in to your existing GeForce NOW account. NVIDIA emails you a verification code and everything goes through the browser proxy.</p>
+<p class="err" id="email-error" hidden></p>
+<form id="email-form">
+<input id="email" type="email" inputmode="email" autocomplete="email" placeholder="NVIDIA account email" required>
+<button class="btn" id="send" type="submit">Send code</button>
+</form>
+<small>Sign-in only. This client never creates accounts.</small>
 </section>
-<section class="card" id="pending">
-<h1>Finish signing in</h1>
-<p>A tab for <b id="verify-host"></b> should have opened. Enter your email, then the verification code NVIDIA emails you. Keep this page open.</p>
-<div class="code" id="code-row"><span id="user-code"></span><button id="copy-code">Copy</button></div>
-<a class="btn" id="open-link" target="_blank" rel="noopener">Open NVIDIA sign-in</a>
-<div class="spin"></div>
-<small id="countdown" style="text-align:center"></small>
-<button class="btn ghost" id="cancel">Cancel</button>
+<section class="card" id="code-card">
+<h1>Enter your code</h1>
+<p>We asked NVIDIA to email a verification code to <b id="sent-to"></b>.</p>
+<p class="err" id="code-error" hidden></p>
+<form id="code-form">
+<input class="otp" id="code" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" required>
+<button class="btn" id="verify" type="submit">Verify</button>
+</form>
+<button class="btn ghost" id="back" type="button">Use a different email</button>
 </section>
 <section class="card" id="account">
 <h1>Signed in</h1>
@@ -61,19 +70,14 @@ small{color:var(--dim)}
 <div class="row"><button class="btn ghost" id="copy-token">Copy access token</button><button class="btn ghost" id="signout">Sign out</button></div>
 </section>
 </main>
+<details>
+<summary>Debug log</summary>
+<pre id="log"></pre>
+<button class="btn ghost" id="copy-log" type="button">Copy log</button>
+</details>
 <script type="module">
 const BAD_KEY = "WB_BAD";
 const BAD_TTL_MS = 6 * 3600000;
-const ENGINE_FAILURE_RE = /\[LoadingScreen\]\s*Engine failure/i;
-
-const classifyLog = (text) => (typeof text === "string" && ENGINE_FAILURE_RE.test(text) ? "engine-failure" : null);
-
-function parseEngineFailure(text) {
-  if (classifyLog(text) !== "engine-failure") return null;
-  const msg = /"message"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(text);
-  const code = /"errorCode"\s*:\s*(-?\d+)/.exec(text);
-  return { message: msg ? msg[1] : "", code: code ? Number(code[1]) : null };
-}
 
 function createBadList({ storage, now = () => Date.now(), ttl = BAD_TTL_MS, key = (entry) => String(entry) } = {}) {
   const box = () => {
@@ -108,46 +112,6 @@ function createBadList({ storage, now = () => Date.now(), ttl = BAD_TTL_MS, key 
   };
 }
 
-function createWatchdog({ current, markBad, switchWisp, relaunch, log = () => {}, max = 2 }) {
-  let used = 0, busy = false, lastSig = null, shared = false;
-  return {
-    get used() { return used; },
-    async feed(text) {
-      if (classifyLog(text) !== "engine-failure") return false;
-      if (busy || used >= max || shared) return false;
-      const info = parseEngineFailure(text);
-      const sig = info ? info.code + "|" + info.message : "";
-      if (info) log("engine failure detail: code=" + info.code + " message=" + info.message);
-      if (lastSig !== null && sig === lastSig) {
-        shared = true;
-        log("same engine failure on " + (used + 1) + " servers, not server-specific; not retrying (check Roblox API/chat traffic through the proxy)");
-        return false;
-      }
-      busy = true;
-      used++;
-      try {
-        const failed = current();
-        if (failed) markBad(failed);
-        log("engine failed on " + failed + ", trying another server (" + used + "/" + max + ")");
-        const next = await switchWisp(failed ? [failed] : []);
-        if (!next || next === failed) {
-          log("no other server available");
-          return false;
-        }
-        await relaunch();
-        lastSig = sig;
-        return true;
-      } catch (e) {
-        log("recovery failed: " + ((e && e.message) || e));
-        return false;
-      } finally {
-        busy = false;
-      }
-    },
-  };
-}
-
-
 const KSTUFF = "lotsacookie/kstuff";
 const STORAGE = "TongSherbet/storage";
 const LIST_PATH = "Assets/json/wss.json";
@@ -176,7 +140,6 @@ const toWss = (e) => {
   return u.endsWith("/") ? u : u + "/";
 };
 const bad = createBadList({ key: toWss });
-const markWispBad = (entry) => bad.add(entry);
 function decodeLoaderList(src, hostRe, wssRe, max, depth = 0) {
   if (depth > 3 || typeof src !== "string") return [];
   let code = null;
@@ -373,7 +336,6 @@ async function pickWisp(network, say = () => {}, opts = {}) {
   return apply([FALLBACK, ...BUILTIN.filter(isBackup)].find(allowed) || FALLBACK);
 }
 
-
 const DIST = "dist/sandstone.mjs";
 const BASES = [
   "https://cdn.jsdelivr.net/gh/lotsacookie/Singuloxy@main/",
@@ -405,18 +367,44 @@ function getProxy({ log = () => {}, say = () => {} } = {}) {
 window.__getProxy = getProxy;
 
 const STARFLEET = "https://login.nvidia.com";
+const STATIC_LOGIN = "https://static-login.nvidia.com";
+const ACCOUNTS = "https://accounts.nvgs.nvidia.com";
+const LOGIN_HOST = "login.nvgs.nvidia.com";
+const LOGIN_ORIGIN = "https://" + LOGIN_HOST;
+const JARVIS_METRICS = "5ZjiARedWmKOoXlrQRFkblcGoDlJGPOT0oHz4C03hOS72FpYLX0LRmdNk8GbhBIJ";
 const CLIENT_ID = "ZU7sPN-miLujMD95LfOQ453IB0AtjM8sMyvgJ9wCXEQ";
+const REDIRECT = "http://localhost:2259";
 const SCOPE = "openid consent email tk_client age";
 const DEVICE_ID = "gfnclient";
-const DISPLAY_NAME = "SingularityNOW";
 const STORE = "singularitynow.session";
+const PAGE_HEADERS = { Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" };
+const TOKEN_HEADERS = {
+  "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+  Accept: "application/json, text/plain, */*",
+  Origin: "https://nvfile",
+  Referer: "https://nvfile/",
+};
 
 const $ = (id) => document.getElementById(id);
-const screens = ["boot", "signin", "pending", "account"];
+const screens = ["boot", "email-card", "code-card", "account"];
 const show = (name) => screens.forEach((s) => $(s).classList.toggle("active", s === name));
 const say = (t) => { $("boot-status").textContent = t; };
 const form = (o) => new URLSearchParams(o).toString();
-const FORM_HEADERS = { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8", Accept: "application/json" };
+
+const maskText = (s) => String(s)
+  .replace(/eyJ[\w-]+\.[\w-]+\.[\w-]+/g, "<jwt>")
+  .replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, "<email>")
+  .replace(/("(?:code|validation|device_code|access_token|refresh_token|id_token|client_token|key)"\s*:\s*")[^"]*(")/g, "$1<hidden>$2")
+  .replace(/((?:code|code_verifier|validation|key)=)[^&\s"]+/g, "$1<hidden>");
+const logLines = [];
+function log(...a) {
+  const line = maskText(a.map((x) => (typeof x === "string" ? x : (() => { try { return JSON.stringify(x); } catch { return String(x); } })())).join(" "));
+  logLines.push(line);
+  if (logLines.length > 400) logLines.shift();
+  $("log").textContent = logLines.join("\n");
+  $("log").scrollTop = $("log").scrollHeight;
+  console.log(line);
+}
 
 const loadStore = () => { try { return JSON.parse(localStorage.getItem(STORE) || "null"); } catch { return null; } };
 const saveStore = (v) => { try { v ? localStorage.setItem(STORE, JSON.stringify(v)) : localStorage.removeItem(STORE); } catch {} };
@@ -428,89 +416,278 @@ const jwt = (t) => {
   } catch { return {}; }
 };
 
+const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const rand = (n) => b64u(crypto.getRandomValues(new Uint8Array(n)));
+const challengeOf = async (v) => b64u(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(v)));
 
-
-async function post(path, body) {
-  const { libcurl } = await window.__getProxy({ log: (...a) => console.log(...a), say });
-  const r = await libcurl.fetch(STARFLEET + path, { method: "POST", headers: FORM_HEADERS, body: form(body) });
-  let json = {};
-  try { json = JSON.parse(await r.text()); } catch {}
-  return { status: r.status, ok: r.ok, json };
+const jar = [];
+function cookieHeader(url) {
+  const host = new URL(url).hostname;
+  return jar.filter((c) => host === c.domain || host.endsWith("." + c.domain)).map((c) => c.name + "=" + c.value).join("; ");
+}
+function storeCookies(url, r) {
+  const host = new URL(url).hostname;
+  const raw = [];
+  if (Array.isArray(r.raw_headers)) {
+    for (const [k, v] of r.raw_headers) if (/^set-cookie$/i.test(k)) raw.push(v);
+  } else if (r.headers && typeof r.headers.get === "function") {
+    const v = r.headers.get("set-cookie");
+    if (v) raw.push(...v.split(/,(?=\s*[^;,=\s]+=)/));
+  }
+  for (const line of raw) {
+    const parts = line.split(";").map((p) => p.trim());
+    const eq = parts[0].indexOf("=");
+    if (eq < 1) continue;
+    const name = parts[0].slice(0, eq), value = parts[0].slice(eq + 1);
+    let domain = host;
+    let expired = false;
+    for (const p of parts.slice(1)) {
+      const [k, v = ""] = p.split("=");
+      if (/^domain$/i.test(k)) domain = v.replace(/^\./, "").toLowerCase();
+      if (/^max-age$/i.test(k) && Number(v) <= 0) expired = true;
+    }
+    const i = jar.findIndex((c) => c.name === name && c.domain === domain);
+    if (i >= 0) jar.splice(i, 1);
+    if (!expired && value) jar.push({ name, value, domain });
+  }
 }
 
-async function get(path, token) {
-  const { libcurl } = await window.__getProxy({ log: (...a) => console.log(...a), say });
-  const r = await libcurl.fetch(STARFLEET + path, { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
-  let json = {};
-  try { json = JSON.parse(await r.text()); } catch {}
-  return { status: r.status, ok: r.ok, json };
+async function http(url, { method = "GET", headers = {}, body, follow = true, stopAt } = {}) {
+  const { libcurl } = await window.__getProxy({ log, say });
+  const chain = [];
+  let cur = url, m = method, b = body, h0 = { ...headers };
+  for (let i = 0; i < 12; i++) {
+    const h = { ...h0 };
+    const ck = cookieHeader(cur);
+    if (ck) h.Cookie = ck;
+    const init = { method: m, headers: h, redirect: "manual" };
+    if (b !== undefined) init.body = b;
+    const r = await libcurl.fetch(cur, init);
+    storeCookies(cur, r);
+    const text = await r.text();
+    const loc = r.headers.get("location");
+    const abs = loc ? new URL(loc, cur).href : null;
+    chain.push(r.status + " " + new URL(cur).host + new URL(cur).pathname);
+    if (follow && r.status >= 300 && r.status < 400 && abs) {
+      if (stopAt && stopAt(abs)) return { status: r.status, url: cur, text, location: abs, chain };
+      cur = abs;
+      if (r.status === 303 || ((r.status === 301 || r.status === 302) && m === "POST")) {
+        m = "GET";
+        b = undefined;
+        delete h0["Content-Type"];
+      }
+      continue;
+    }
+    return { status: r.status, url: cur, text, location: abs, chain };
+  }
+  throw new Error("Too many redirects");
 }
 
-let run = 0;
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+let flow = null;
 
-function setError(t) {
-  const e = $("signin-error");
+async function beginFlow() {
+  jar.length = 0;
+  flow = null;
+  const verifier = rand(48);
+  const challenge = await challengeOf(verifier);
+  const authUrl = STARFLEET + "/authorize?" + form({
+    response_type: "code",
+    device_id: DEVICE_ID,
+    scope: SCOPE,
+    client_id: CLIENT_ID,
+    redirect_uri: REDIRECT,
+    ui_locales: "en_US",
+    nonce: rand(16),
+    prompt: "select_account",
+    code_challenge: challenge,
+    code_challenge_method: "S256",
+  });
+  log("[auth] authorize");
+  const a = await http(authUrl, { headers: PAGE_HEADERS });
+  log("[auth] chain", a.chain.join(" > "));
+  const page = new URL(a.url);
+  const state = page.searchParams.get("state");
+  const idp = (page.searchParams.get("idp_ids") || "").split(/\s+/).filter(Boolean)[0];
+  if (!state || !idp) throw new Error("NVIDIA did not return a sign-in provider (status " + a.status + ")");
+  const p = await http(STARFLEET + "/callback/provider", {
+    method: "POST",
+    headers: { ...PAGE_HEADERS, "Content-Type": "application/x-www-form-urlencoded", Origin: STATIC_LOGIN, Referer: a.url },
+    body: form({ state, idp_id: idp }),
+    stopAt: (next) => new URL(next).hostname === LOGIN_HOST,
+  });
+  log("[auth] provider chain", p.chain.join(" > "));
+  const key = p.location ? new URL(p.location).searchParams.get("key") : null;
+  if (!key) throw new Error("NVIDIA did not start a login session (status " + p.status + ")");
+  flow = { verifier, key, email: "" };
+}
+
+async function api(path, body, method = "POST") {
+  if (!flow || !flow.key) throw new Error("No active sign-in session");
+  const headers = {
+    Accept: "application/json, text/plain, */*",
+    Authorization: "Bearer " + flow.key,
+    "x-metrics": JARVIS_METRICS,
+    Origin: LOGIN_ORIGIN,
+    Referer: LOGIN_ORIGIN + "/",
+  };
+  const init = { method, headers, follow: false };
+  if (method === "POST") {
+    headers["Content-Type"] = "application/json";
+    init.body = JSON.stringify(body || {});
+  }
+  const r = await http(ACCOUNTS + path, init);
+  let json = {};
+  try { json = JSON.parse(r.text); } catch {}
+  if (json && typeof json.key === "string") flow.key = json.key;
+  const ok = r.status >= 200 && r.status < 300;
+  log("[api]", method, path, r.status, r.text.slice(0, 400));
+  return { status: r.status, ok, json, text: r.text };
+}
+
+const apiError = (r) => {
+  const j = r.json || {};
+  const msg = j.message || j.error_description || j.errorMessage || j.error || (j.errors && JSON.stringify(j.errors));
+  return new Error(msg ? String(msg) : "NVIDIA returned " + r.status);
+};
+
+const accountMissing = (r) => {
+  const j = r.json || {};
+  const flags = [j.exist, j.exists, j.accountExists, j.userExists, j.existing, j.registered, j.found];
+  return r.status === 404 || flags.some((v) => v === false);
+};
+
+async function requestCode(email) {
+  await beginFlow();
+  const check = await api("/api/1/frontend/oauth/account/check", { email });
+  if (!check.ok) throw apiError(check);
+  if (accountMissing(check)) throw new Error("No NVIDIA account was found for that email. This client only signs in to existing accounts.");
+  const sent = await api("/api/1/frontend/oauth/user/requestverify", { email });
+  if (!sent.ok) throw apiError(sent);
+  flow.email = email;
+}
+
+function findRedirect(v) {
+  let hit = null;
+  (function walk(x) {
+    if (hit) return;
+    if (typeof x === "string") {
+      if (/^https?:\/\//i.test(x) && (x.startsWith(REDIRECT) || /\/callback\//.test(x) || /[?&]code=/.test(x))) hit = x;
+    } else if (Array.isArray(x)) x.forEach(walk);
+    else if (x && typeof x === "object") Object.values(x).forEach(walk);
+  })(v);
+  return hit;
+}
+
+async function advance(first) {
+  let found = findRedirect(first && first.json);
+  for (let i = 0; i < 6 && !found; i++) {
+    const n = await api("/api/1/frontend/oauth/user/next", {});
+    if (!n.ok) throw apiError(n);
+    found = findRedirect(n.json);
+    if (!found) log("[auth] next stage", JSON.stringify(n.json).slice(0, 300));
+  }
+  if (!found) throw new Error("NVIDIA asked for a step this client does not handle yet. Open the debug log for details.");
+  return found;
+}
+
+async function claimTokens(url) {
+  let landed = url;
+  if (!url.startsWith(REDIRECT)) {
+    const r = await http(url, { headers: PAGE_HEADERS, stopAt: (next) => next.startsWith(REDIRECT) });
+    log("[auth] callback chain", r.chain.join(" > "));
+    landed = r.location || "";
+  }
+  if (!landed.startsWith(REDIRECT)) throw new Error("NVIDIA did not hand back an authorization code");
+  const code = new URL(landed).searchParams.get("code");
+  if (!code) throw new Error("NVIDIA did not hand back an authorization code");
+  const t = await http(STARFLEET + "/token", {
+    method: "POST",
+    headers: TOKEN_HEADERS,
+    body: form({ grant_type: "authorization_code", code, redirect_uri: REDIRECT, code_verifier: flow.verifier, client_id: CLIENT_ID, device_id: DEVICE_ID }),
+    follow: false,
+  });
+  let json = {};
+  try { json = JSON.parse(t.text); } catch {}
+  log("[auth] token", t.status);
+  if (t.status < 200 || t.status >= 300 || !json.access_token) throw new Error(json.error_description || json.error || "Token exchange failed (" + t.status + ")");
+  return json;
+}
+
+async function userinfo(token) {
+  const r = await http(STARFLEET + "/userinfo", { headers: { Authorization: "Bearer " + token, Accept: "application/json" }, follow: false });
+  try { return JSON.parse(r.text); } catch { return {}; }
+}
+
+async function verifyCode(code) {
+  const v = await api("/api/1/frontend/oauth/nonuser/email/authentication", { validation: code });
+  if (!v.ok) throw apiError(v);
+  const redirect = await advance(v);
+  return claimTokens(redirect);
+}
+
+function setError(id, t) {
+  const e = $(id);
   e.textContent = t || "";
   e.hidden = !t;
 }
 
-async function startSignIn() {
-  const mine = ++run;
-  setError("");
-  $("start").disabled = true;
-  $("start").textContent = "Connecting…";
+let busy = false;
+
+async function onEmail(ev) {
+  ev.preventDefault();
+  if (busy) return;
+  busy = true;
+  setError("email-error", "");
+  const email = $("email").value.trim();
+  $("send").disabled = true;
+  $("send").textContent = "Contacting NVIDIA…";
   try {
-    const d = await post("/device/authorize", { client_id: CLIENT_ID, scope: SCOPE, device_id: DEVICE_ID, display_name: DISPLAY_NAME });
-    if (!d.ok || !d.json.device_code) throw new Error(d.json.error_description || d.json.error || "NVIDIA refused the sign-in request (" + d.status + ")");
-    const info = d.json;
-    const link = info.verification_uri_complete || info.verification_uri;
-    $("user-code").textContent = info.user_code || "";
-    $("code-row").hidden = !info.user_code;
-    $("open-link").href = link;
-    $("open-link").textContent = "Open NVIDIA sign-in";
-    $("verify-host").textContent = (() => { try { return new URL(info.verification_uri || link).host; } catch { return "login.nvidia.com"; } })();
-    show("pending");
-    window.open(link, "_blank", "noopener");
-    const expires = Date.now() + (info.expires_in || 600) * 1000;
-    let interval = Math.max(1, info.interval || 5);
-    while (mine === run && Date.now() < expires) {
-      await sleep(interval * 1000);
-      if (mine !== run) return;
-      $("countdown").textContent = Math.max(0, Math.round((expires - Date.now()) / 1000)) + "s left";
-      const t = await post("/token", { grant_type: "urn:ietf:params:oauth:grant-type:device_code", device_code: info.device_code, client_id: CLIENT_ID });
-      if (t.ok && t.json.access_token) return finish(t.json);
-      const err = t.json.error;
-      if (err === "authorization_pending") continue;
-      if (err === "slow_down") { interval += 5; continue; }
-      if (err === "access_denied") throw new Error("Sign-in was cancelled on NVIDIA's page.");
-      if (err === "expired_token") break;
-      if (err) throw new Error(t.json.error_description || err);
-    }
-    if (mine === run) throw new Error("The sign-in code expired. Start again.");
+    await requestCode(email);
+    $("sent-to").textContent = email;
+    $("code").value = "";
+    setError("code-error", "");
+    show("code-card");
+    $("code").focus();
   } catch (e) {
-    if (mine !== run) return;
-    show("signin");
-    setError(e && e.message ? e.message : String(e));
+    flow = null;
+    setError("email-error", e && e.message ? e.message : String(e));
   } finally {
-    $("start").disabled = false;
-    $("start").textContent = "Sign in with NVIDIA";
+    busy = false;
+    $("send").disabled = false;
+    $("send").textContent = "Send code";
+  }
+}
+
+async function onCode(ev) {
+  ev.preventDefault();
+  if (busy) return;
+  busy = true;
+  setError("code-error", "");
+  $("verify").disabled = true;
+  $("verify").textContent = "Verifying…";
+  try {
+    const tokens = await verifyCode($("code").value.trim());
+    await finish(tokens);
+    flow = null;
+  } catch (e) {
+    setError("code-error", e && e.message ? e.message : String(e));
+  } finally {
+    busy = false;
+    $("verify").disabled = false;
+    $("verify").textContent = "Verify";
   }
 }
 
 async function finish(tokens) {
   let user = {};
-  try {
-    const u = await get("/userinfo", tokens.access_token);
-    if (u.ok) user = u.json;
-  } catch {}
+  try { user = await userinfo(tokens.access_token); } catch {}
   const claims = tokens.id_token ? jwt(tokens.id_token) : {};
   const session = {
     at: Date.now(),
     tokens,
     user: {
       sub: user.sub || claims.sub || "",
-      email: user.email || claims.email || "",
+      email: user.email || claims.email || (flow && flow.email) || "",
       email_verified: user.email_verified ?? claims.email_verified ?? null,
       name: user.preferred_username || user.name || claims.preferred_username || claims.name || "",
     },
@@ -520,7 +697,7 @@ async function finish(tokens) {
 }
 
 function render(session) {
-  if (!session) { show("signin"); return; }
+  if (!session) { show("email-card"); return; }
   const u = session.user || {};
   $("acct-email").textContent = u.email || "(no email returned)";
   $("acct-name").textContent = u.name || u.sub || "";
@@ -533,27 +710,27 @@ function render(session) {
 }
 
 function signOut() {
-  run++;
+  flow = null;
   saveStore(null);
-  setError("");
-  show("signin");
+  setError("email-error", "");
+  show("email-card");
 }
 
 async function copy(text, btn) {
   try { await navigator.clipboard.writeText(text); const o = btn.textContent; btn.textContent = "Copied"; setTimeout(() => (btn.textContent = o), 1200); } catch {}
 }
 
-$("start").addEventListener("click", startSignIn);
-$("cancel").addEventListener("click", () => { run++; show("signin"); });
+$("email-form").addEventListener("submit", onEmail);
+$("code-form").addEventListener("submit", onCode);
+$("back").addEventListener("click", () => { flow = null; setError("code-error", ""); show("email-card"); });
 $("signout").addEventListener("click", signOut);
-$("copy-code").addEventListener("click", (e) => copy($("user-code").textContent, e.currentTarget));
 $("copy-token").addEventListener("click", (e) => { const s = loadStore(); if (s) copy(s.tokens.access_token, e.currentTarget); });
+$("copy-log").addEventListener("click", (e) => copy(logLines.join("\n"), e.currentTarget));
 
 const existing = loadStore();
 if (existing) render(existing);
-else show("signin");
-window.__getProxy({ log: (...a) => console.log(...a), say }).catch(() => {});
-
+else show("email-card");
+window.__getProxy({ log, say }).catch((e) => log("[proxy] failed", (e && e.message) || e));
 </script>
 </body>
 </html>
