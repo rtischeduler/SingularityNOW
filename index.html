@@ -38,6 +38,46 @@ details pre{background:#0b0d10;border:1px solid var(--line);border-radius:10px;p
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
 #account{max-width:1100px;width:100%}#lib-search{flex:1;min-width:0}#lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:12px 0}
 .game{border-radius:8px;overflow:hidden;background:#1b1b1b;font-size:13px}.game img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#222}.game div{padding:6px 8px}.game small{display:block;opacity:.6}
+
+body{background:radial-gradient(900px 500px at 15% -10%,rgba(118,185,0,.16),transparent 60%),radial-gradient(800px 500px at 100% 0,rgba(118,185,0,.07),transparent 55%),var(--bg)}
+.card{background:rgba(20,24,29,.82);backdrop-filter:blur(14px);box-shadow:0 20px 60px rgba(0,0,0,.45);border-radius:20px}
+.card h1{font-size:1.6rem;font-weight:800}
+.btn{transition:transform .12s,filter .12s}.btn:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px)}
+body.app{display:block;padding:0}body.app main{width:100%}
+#account{max-width:none;width:100%;min-height:100vh;border:0;border-radius:0;padding:0 clamp(14px,3vw,40px) 40px;background:none;backdrop-filter:none;box-shadow:none;gap:0}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:20px;padding:14px 0;margin:0 calc(-1*clamp(14px,3vw,40px));padding-inline:clamp(14px,3vw,40px);background:linear-gradient(#0b0d10 60%,rgba(11,13,16,0));}
+.logo{font-weight:800;font-size:1.15rem;letter-spacing:.02em;display:flex;align-items:center;gap:10px;white-space:nowrap}.logo b{color:var(--green)}
+.logo i{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#9be000,#4d7a00);box-shadow:0 0 18px rgba(118,185,0,.55)}
+.searchbox{flex:1;max-width:520px;margin:0 auto;position:relative;color:var(--dim)}
+.searchbox svg{position:absolute;left:14px;top:50%;translate:0 -50%;pointer-events:none}
+.searchbox input{padding:11px 16px 11px 42px;border-radius:999px;background:#12161b}
+.acct{position:relative}.avatar{width:38px;height:38px;border-radius:50%;border:2px solid var(--green);background:#1b2a0b;color:var(--green);font:800 15px system-ui;cursor:pointer}
+.menu{position:absolute;right:0;top:48px;width:290px;background:#14181d;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.menu[hidden]{display:none}.menu .big{font-size:.95rem}
+.hero{position:relative;height:clamp(180px,30vw,320px);border-radius:18px;overflow:hidden;margin:6px 0 22px;display:flex;align-items:flex-end;border:1px solid var(--line)}
+.hero[hidden]{display:none}
+.hero-bg{position:absolute;inset:0;background:#12161b center/cover no-repeat;transform:scale(1.02);animation:fade .6s}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,13,16,.92) 0%,rgba(11,13,16,.35) 55%,transparent),linear-gradient(0deg,rgba(11,13,16,.8),transparent 60%)}
+.hero-in{position:relative;z-index:1;padding:clamp(16px,3vw,32px);display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.hero-in small{color:var(--green);font-weight:800;letter-spacing:.16em}.hero-in h2{font-size:clamp(1.4rem,3.5vw,2.4rem);line-height:1.1;max-width:20ch}
+.pill{border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 12px;font-size:.78rem;color:var(--ink);background:rgba(0,0,0,.35)}
+.bar{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}.bar h3{font-size:1.1rem}#lib-count{color:var(--dim);font-size:.85rem}
+#lib-status{margin:0 0 8px;font-size:.9rem;min-height:1px}
+#lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(180px,22vw,260px),1fr));gap:16px;margin:0}
+.game{position:relative;border-radius:12px;overflow:hidden;background:#12161b;border:1px solid var(--line);aspect-ratio:16/10;cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;animation:fade .35s both}
+.game:hover,.game:focus-visible{transform:translateY(-4px) scale(1.02);border-color:var(--green);box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 1px var(--green);outline:none;z-index:2}
+.game img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.game:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.1) 55%,transparent)}
+.game .meta{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:10px 12px;font-size:.88rem;font-weight:700;line-height:1.25;display:flex;flex-direction:column;gap:3px}
+.game .meta span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.game .meta small{font-weight:600;font-size:.72rem;color:#c3ccd4}
+.game .tag{position:absolute;top:8px;left:8px;z-index:1;font-size:.65rem;font-weight:800;letter-spacing:.06em;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:2px 7px;text-transform:uppercase}
+.game .play{position:absolute;right:10px;top:50%;z-index:1;width:42px;height:42px;border-radius:50%;background:var(--green);color:#0b0d10;display:grid;place-items:center;opacity:0;translate:0 -50%;transition:opacity .18s}.game:hover .play{opacity:1}
+.game.sk{pointer-events:none;background:linear-gradient(100deg,#12161b 30%,#1b2128 50%,#12161b 70%) 0 0/200% 100%;animation:sh 1.2s linear infinite}.game.sk:after{display:none}
+@keyframes sh{to{background-position:-200% 0}}@keyframes fade{from{opacity:0}to{opacity:1}}
+#lib-more{margin:20px auto 0;width:200px}#lib-sentinel{height:1px}
+@media(max-width:640px){.logo{font-size:0}.logo i{font-size:1rem}.top{gap:12px}}
+@media (prefers-reduced-motion:reduce){.game,.hero-bg,.game.sk{animation:none}.game{transition:none}}
 </style>
 </head>
 <body>
@@ -80,18 +120,19 @@ details pre{background:#0b0d10;border:1px solid var(--line);border-radius:10px;p
 <button class="btn ghost" id="pw-cancel" type="button">Cancel</button>
 </section>
 <section class="card" id="account">
-<h1>Signed in</h1>
-<div class="big" id="acct-email"></div>
-<p id="acct-name"></p>
-<span class="badge" id="acct-verified"></span>
-<small id="acct-exp"></small>
-<div id="lib">
-    <div class="row"><input id="lib-search" type="search" placeholder="Search games" autocomplete="off"><span id="lib-count"></span></div>
-    <p id="lib-status"></p>
-    <div id="lib-grid"></div>
-    <button class="btn ghost" id="lib-more" hidden>Load more</button>
-  </div>
-  <div class="row"><button class="btn ghost" id="copy-token">Copy access token</button><button class="btn ghost" id="signout">Sign out</button></div>
+<header class="top">
+<div class="logo"><i></i>Singularity<b>NOW</b></div>
+<div class="searchbox"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="lib-search" type="search" placeholder="Search games" autocomplete="off"></div>
+<div class="acct"><button class="avatar" id="acct-btn" type="button" aria-label="Account"></button>
+<div class="menu" id="acct-menu" hidden><div class="big" id="acct-email"></div><p id="acct-name"></p><span class="badge" id="acct-verified"></span><small id="acct-exp"></small>
+<button class="btn ghost" id="copy-token">Copy access token</button><button class="btn ghost" id="signout">Sign out</button></div></div>
+</header>
+<section class="hero" id="hero" hidden><div class="hero-bg" id="hero-bg"></div><div class="hero-in"><small>FEATURED</small><h2 id="hero-title"></h2><span class="pill" id="hero-meta"></span></div></section>
+<div class="bar"><h3 id="lib-title">All games</h3><span id="lib-count"></span></div>
+<p id="lib-status"></p>
+<div id="lib-grid"></div>
+<div id="lib-sentinel"></div>
+<button class="btn ghost" id="lib-more" hidden>Load more</button>
 </section>
 </main>
 <details>
@@ -423,7 +464,7 @@ const EP = {
 
 const $ = (id) => document.getElementById(id);
 const screens = ["boot", "email-card", "wait-card", "code-card", "password-card", "account"];
-const show = (name) => screens.forEach((s) => $(s).classList.toggle("active", s === name));
+const show = (name) => { screens.forEach((s) => $(s).classList.toggle("active", s === name)); document.body.classList.toggle("app", name === "account"); };
 const say = (t) => { $("boot-status").textContent = t; };
 const form = (o) => new URLSearchParams(o).toString();
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -896,7 +937,7 @@ async function fetchApps(session, search, cursor) {
   const a = j.data && j.data.apps;
   if (!a) throw new Error("GeForce NOW returned no game list");
   return {
-    items: (a.items || []).map((g) => ({ id: g.id, title: g.title, img: g.images && (g.images.TV_BANNER || g.images.HERO_IMAGE), tier: g.gfn && g.gfn.minimumMembershipTierLabel, store: (g.variants || []).map((v) => v.appStore).filter(Boolean)[0] })),
+    items: (a.items || []).map((g) => ({ id: g.id, title: g.title, img: g.images && (g.images.TV_BANNER || g.images.HERO_IMAGE), hero: g.images && (g.images.HERO_IMAGE || g.images.TV_BANNER), playable: g.gfn && g.gfn.playabilityState, tier: g.gfn && g.gfn.minimumMembershipTierLabel, store: (g.variants || []).map((v) => v.appStore).filter(Boolean)[0] })),
     next: a.pageInfo && a.pageInfo.hasNextPage ? a.pageInfo.endCursor : "",
     total: a.pageInfo && a.pageInfo.totalCount,
   };
@@ -916,24 +957,49 @@ async function publicApps(q) {
 function drawGames(items, append) {
   const grid = $("lib-grid");
   if (!append) grid.textContent = "";
-  for (const g of items) {
+  grid.querySelectorAll(".sk").forEach((e) => e.remove());
+  const frag = document.createDocumentFragment();
+  items.forEach((g, n) => {
     const d = document.createElement("div");
     d.className = "game";
-    if (g.img) { const i = document.createElement("img"); i.loading = "lazy"; i.referrerPolicy = "no-referrer"; i.alt = ""; i.src = g.img; d.appendChild(i); }
-    const t = document.createElement("div");
+    d.tabIndex = 0;
+    d.style.animationDelay = Math.min(n, 20) * 18 + "ms";
+    if (g.img) { const i = document.createElement("img"); i.loading = "lazy"; i.referrerPolicy = "no-referrer"; i.alt = ""; i.src = g.img; i.onerror = () => i.remove(); d.appendChild(i); }
+    if (g.store) { const t = document.createElement("span"); t.className = "tag"; t.textContent = g.store; d.appendChild(t); }
+    d.insertAdjacentHTML("beforeend", '<div class="play"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>');
+    const m = document.createElement("div");
+    m.className = "meta";
+    const t = document.createElement("span");
     t.textContent = g.title || "Untitled";
-    const sm = document.createElement("small");
-    sm.textContent = [g.store, g.tier].filter(Boolean).join(" · ");
-    t.appendChild(sm);
-    d.appendChild(t);
-    grid.appendChild(d);
-  }
+    m.appendChild(t);
+    if (g.tier) { const sm = document.createElement("small"); sm.textContent = g.tier; m.appendChild(sm); }
+    d.appendChild(m);
+    frag.appendChild(d);
+  });
+  grid.appendChild(frag);
+}
+
+function drawHero(g) {
+  const h = $("hero");
+  if (!g || !(g.hero || g.img)) { h.hidden = true; return; }
+  $("hero-bg").style.backgroundImage = "url(" + JSON.stringify(g.hero || g.img) + ")";
+  $("hero-title").textContent = g.title || "";
+  $("hero-meta").textContent = [g.store, g.tier, "Cloud gaming"].filter(Boolean).join(" · ");
+  h.hidden = false;
+}
+
+function skeletons(n) {
+  const grid = $("lib-grid");
+  for (let i = 0; i < n; i++) { const d = document.createElement("div"); d.className = "game sk"; grid.appendChild(d); }
 }
 
 async function loadLibrary(session, append) {
   const my = ++lib.seq, q = lib.q;
-  $("lib-status").textContent = "Loading games…";
+  $("lib-status").textContent = "";
   $("lib-more").hidden = true;
+  lib.busy = true;
+  if (!append) $("lib-grid").textContent = "";
+  skeletons(append ? 6 : 12);
   try {
     let res;
     if (lib.authed) {
@@ -948,12 +1014,16 @@ async function loadLibrary(session, append) {
     if (my !== lib.seq) return;
     lib.cursor = res.next;
     drawGames(res.items, append);
+    if (!append) { drawHero(q ? null : res.items.find((g) => g.hero)); $("lib-title").textContent = q ? "Results for “" + q + "”" : "All games"; }
     $("lib-count").textContent = (res.total != null ? res.total : $("lib-grid").children.length) + " games";
     $("lib-more").hidden = !res.next;
     $("lib-status").textContent = $("lib-status").dataset.note || "";
+    lib.busy = false;
     if (!$("lib-grid").children.length) $("lib-status").textContent = q ? "No games match “" + q + "”." : "No games found.";
   } catch (e) {
     if (my !== lib.seq) return;
+    lib.busy = false;
+    $("lib-grid").querySelectorAll(".sk").forEach((x) => x.remove());
     log("[lib] failed", e.message || e);
     $("lib-status").textContent = "Couldn’t load games: " + (e.message || e) + " (see debug log)";
   }
@@ -965,6 +1035,9 @@ $("lib-search").addEventListener("input", () => {
   clearTimeout(libTimer);
   libTimer = setTimeout(() => { lib.q = $("lib-search").value.trim(); lib.cursor = ""; const s = libSession(); if (s) loadLibrary(s, false); }, 400);
 });
+new IntersectionObserver((e) => { if (e[0].isIntersecting && lib.cursor && !lib.busy) { const s = libSession(); if (s) loadLibrary(s, true); } }, { rootMargin: "600px" }).observe($("lib-sentinel"));
+$("acct-btn").addEventListener("click", (ev) => { ev.stopPropagation(); $("acct-menu").hidden = !$("acct-menu").hidden; });
+document.addEventListener("click", (ev) => { if (!ev.target.closest(".acct")) $("acct-menu").hidden = true; });
 $("lib-more").addEventListener("click", () => { const s = libSession(); if (s) loadLibrary(s, true); });
 
 function render(session) {
@@ -977,6 +1050,7 @@ function render(session) {
   v.className = "badge " + (u.email_verified === true ? "ok" : u.email_verified === false ? "warn" : "");
   const exp = session.tokens.expires_in ? new Date(session.at + session.tokens.expires_in * 1000) : null;
   $("acct-exp").textContent = exp ? "Access token valid until " + exp.toLocaleString() : "";
+  $("acct-btn").textContent = ((u.name || u.email || "?")[0] || "?").toUpperCase();
   show("account");
   lib.tokens = []; lib.cursor = ""; lib.authed = true; lib.q = $("lib-search").value.trim();
   loadLibrary(session, false);
