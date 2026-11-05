@@ -1074,7 +1074,7 @@ async function loadZones(force) {
       const o = v && typeof v === "object" ? v : {};
       const q = Number(o.QueuePosition ?? o.queuePosition ?? o.queue ?? o.position);
       return { id, q: Number.isFinite(q) ? q : null, region: o.Region || o.region || "" };
-    }).filter((x) => /^[A-Za-z]{2,4}-[A-Za-z0-9-]+$/.test(x.id));
+    }).filter((x) => /^NP-[A-Za-z0-9-]+$/i.test(x.id));
     if (!rows.length) throw new Error("empty");
     rows.sort((a, b) => (a.q ?? 1e9) - (b.q ?? 1e9));
     sel.textContent = "";
@@ -1124,7 +1124,7 @@ async function launch(g) {
     const vpcId = cfg.zone || await findVpc(session);
     log("[stream] server", vpcId, cfg.zone ? "(chosen)" : "(auto)", "res", cfg.res, "fps", cfg.fps);
     let w, h;
-    if (cfg.res === "auto") { w = Math.min(1920, (screen.width * (devicePixelRatio || 1)) | 0) || 1920; h = Math.min(1080, (screen.height * (devicePixelRatio || 1)) | 0) || 1080; }
+    if (cfg.res === "auto") { const lo = Math.min(screen.width, screen.height) * (devicePixelRatio || 1), hi = Math.max(screen.width, screen.height) * (devicePixelRatio || 1); w = Math.min(1920, hi | 0) || 1920; h = Math.min(1080, lo | 0) || 1080; }
     else [w, h] = cfg.res.split("x").map(Number);
     const { startStream } = await import("./stream.js");
     current = await startStream({
@@ -1134,7 +1134,7 @@ async function launch(g) {
     });
   } catch (e) {
     log("[stream] launch failed", e.message || e);
-    st("Couldn’t start the game: " + (e.message || e));
+    st("Couldn’t start the game: " + (e.message || e) + (/code 60|certificate/i.test(String(e.message)) ? " — that server isn’t reachable here; pick an NP- server in Settings." : ""));
     current = { stop: async () => {} };
     setTimeout(() => { if (current && $("pstatus").textContent.startsWith("Couldn")) closePlayer(); }, 6000);
   }

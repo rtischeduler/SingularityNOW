@@ -150,8 +150,29 @@ export async function startStream(o) {
         requestedStreamingFeatures: { reflex: false, bitDepth: 0, cloudGsync: false, enabledL4S: false, profile: 0, fallbackToLogicalResolution: false, chromaFormat: 0, prefilterMode: 0, prefilterSharpness: 0, prefilterNoiseReduction: 0, hudStreamingMode: 0 },
       },
     };
-    const c = await call("POST", "/v2/session?keyboardLayout=en-US&languageCode=en_US", req);
-    log("[stream] create", c.status, c.text.slice(0, 3000));
+    let c;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      c = await call("POST", "/v2/session?keyboardLayout=en-US&languageCode=en_US", req);
+      log("[stream] create", c.status, c.text.slice(0, attempt ? 600 : 1500));
+      const r0 = c.json.requestStatus || {};
+      if (attempt === 0 && (r0.statusCode === 11 || /SESSION_LIMIT/.test(r0.statusDescription || ""))) {
+        status("Ending your old session…");
+        let old = (c.json.otherUserSessions || []).map((x) => ({ host: x.sessionControlInfo && x.sessionControlInfo.ip, id: x.sessionId }));
+        if (!old.length) {
+          const a = await call("GET", "/v2/session");
+          old = (a.json.sessions || a.json.activeSessions || []).map((x) => ({ host: x.sessionControlInfo && x.sessionControlInfo.ip, id: x.sessionId }));
+        }
+        for (const x of old) {
+          if (!x.id) continue;
+          const url = "https://" + (x.host || new URL(base).host) + "/v2/session/" + x.id;
+          try { const d = await http(url, { method: "DELETE", headers: hdr(), follow: false }); log("[stream] ended old session", x.id, d.status); }
+          catch (e) { log("[stream] couldn't end old session", x.id, e.message || e); }
+        }
+        await sleep(3000);
+        continue;
+      }
+      break;
+    }
     const rs = c.json.requestStatus || {};
     if (!c.json.session || (rs.statusCode && rs.statusCode !== 1)) throw new Error("GeForce NOW refused the session: " + (rs.statusDescription || c.status) + (rs.unifiedErrorCode ? " (" + rs.unifiedErrorCode + ")" : ""));
     sessionId = c.json.session.sessionId;
