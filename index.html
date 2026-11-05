@@ -67,6 +67,16 @@ details pre{background:#0b0d10;border:1px solid var(--line);border-radius:10px;p
 </form>
 <button class="btn ghost" id="back" type="button">Cancel</button>
 </section>
+<section class="card" id="password-card">
+<h1>Enter your password</h1>
+<p id="pw-desc"></p>
+<p class="err" id="pw-error" hidden></p>
+<form id="pw-form">
+<input id="pw" type="password" autocomplete="current-password" placeholder="NVIDIA account password" required>
+<button class="btn" id="pw-submit" type="submit">Sign in</button>
+</form>
+<button class="btn ghost" id="pw-cancel" type="button">Cancel</button>
+</section>
 <section class="card" id="account">
 <h1>Signed in</h1>
 <div class="big" id="acct-email"></div>
@@ -398,10 +408,11 @@ const EP = {
   verify: "/api/1/frontend/oauth/auth/factor/challenge/verify",
   poll: "/api/1/frontend/oauth/user/email/auth/poll",
   consent: "/api/1/frontend/oauth/user/consent",
+  password: "/api/1/frontend/oauth/user/login/password",
 };
 
 const $ = (id) => document.getElementById(id);
-const screens = ["boot", "email-card", "wait-card", "code-card", "account"];
+const screens = ["boot", "email-card", "wait-card", "code-card", "password-card", "account"];
 const show = (name) => screens.forEach((s) => $(s).classList.toggle("active", s === name));
 const say = (t) => { $("boot-status").textContent = t; };
 const form = (o) => new URLSearchParams(o).toString();
@@ -592,6 +603,29 @@ function askCode(title, desc, err) {
   return new Promise((resolve, reject) => { codeWaiter = { resolve, reject }; });
 }
 
+function askPassword(err) {
+  $("pw-desc").textContent = "Signing in as " + flow.email + ".";
+  $("pw-error").textContent = err || "";
+  $("pw-error").hidden = !err;
+  $("pw").value = "";
+  show("password-card");
+  $("pw").focus();
+  return new Promise((resolve, reject) => { codeWaiter = { resolve, reject }; });
+}
+
+async function passwordStage(mine) {
+  let err = "";
+  for (let i = 0; i < 3; i++) {
+    const password = await askPassword(err);
+    alive(mine);
+    setWait("Signing in…", "");
+    const r = await api(EP.password, { password, rememberLogin: false, deviceId: JARVIS_DEVICE });
+    if (r.ok) return;
+    err = apiError(r).message;
+  }
+  throw new Error("Too many wrong passwords.");
+}
+
 async function selectFactor() {
   const r = await api(EP.factors, null, "GET");
   if (!r.ok) throw apiError(r);
@@ -650,6 +684,7 @@ async function drive(mine) {
     last = page;
     if (repeats >= 2) throw new Error("NVIDIA kept returning the " + page + " step. Open the debug log.");
     if (page === "Finish") return finishStage(n.json);
+    if (page === "EnterPassword") { await passwordStage(mine); continue; }
     if (page === "NFactorChallengeSelect") { setWait("Contacting NVIDIA…", ""); await selectFactor(); continue; }
     if (page === "NFactorEmailAuthWait") { await waitForEmail(mine); continue; }
     if (page === "NFactorTOTPChallenge") { await totpChallenge(mine); continue; }
@@ -792,6 +827,14 @@ async function copy(text, btn) {
 
 $("email-form").addEventListener("submit", onEmail);
 $("code-form").addEventListener("submit", onCode);
+$("pw-form").addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  if (!codeWaiter) return;
+  const w = codeWaiter;
+  codeWaiter = null;
+  w.resolve($("pw").value);
+});
+$("pw-cancel").addEventListener("click", cancelLogin);
 $("cancel").addEventListener("click", cancelLogin);
 $("back").addEventListener("click", cancelLogin);
 $("signout").addEventListener("click", signOut);
