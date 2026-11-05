@@ -83,6 +83,8 @@ body.app{display:block;padding:0}body.app main{width:100%}
 #pstatus{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:1.2rem;padding:24px;pointer-events:none;text-shadow:0 2px 12px #000;background:radial-gradient(500px 300px at 50% 50%,rgba(118,185,0,.18),transparent 70%)}#pstatus:empty{display:none}
 .pbar{position:absolute;top:14px;right:14px;display:flex;gap:10px;opacity:.0;transition:opacity .2s}#player:hover .pbar,.pbar:focus-within{opacity:1}.pbar .btn{padding:9px 14px}
 #phint{position:absolute;bottom:14px;left:50%;translate:-50% 0;font-size:.8rem;color:#c3ccd4;background:rgba(0,0,0,.55);padding:5px 12px;border-radius:999px;pointer-events:none;opacity:0;transition:opacity .3s}#player:hover #phint{opacity:1}
+body.app details,#player~details{position:fixed;right:12px;bottom:12px;z-index:200;width:min(620px,94vw);background:rgba(11,13,16,.94);border:1px solid var(--line);border-radius:12px;padding:6px 10px}
+details summary{font-weight:700}details .dbgbtn{margin:6px 0;padding:6px 12px;font-size:.8rem}
 </style>
 </head>
 <body>
@@ -1076,6 +1078,7 @@ async function closePlayer() {
 $("pstop").addEventListener("click", closePlayer);
 $("pfs").addEventListener("click", () => { const p = $("player"); (document.fullscreenElement ? document.exitFullscreen() : p.requestFullscreen()).catch(() => {}); });
 
+{ const d = $("log").closest("details"), b = document.createElement("button"); b.className = "btn ghost dbgbtn"; b.type = "button"; b.textContent = "Copy log"; b.onclick = () => copy(logLines.join("\n"), b); d.insertBefore(b, $("log")); d.querySelector("summary").textContent = "Debug log"; }
 let libTimer = 0;
 const libSession = () => loadStore();
 $("lib-search").addEventListener("input", () => {

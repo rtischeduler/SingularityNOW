@@ -150,22 +150,26 @@ export async function startStream(o) {
       },
     };
     const c = await call("POST", "/v2/session?keyboardLayout=en-US&languageCode=en_US", req);
-    log("[stream] create", c.status, c.text.slice(0, 500));
+    log("[stream] create", c.status, c.text.slice(0, 3000));
     const rs = c.json.requestStatus || {};
     if (!c.json.session || (rs.statusCode && rs.statusCode !== 1)) throw new Error("GeForce NOW refused the session: " + (rs.statusDescription || c.status) + (rs.unifiedErrorCode ? " (" + rs.unifiedErrorCode + ")" : ""));
     sessionId = c.json.session.sessionId;
 
     // 2. poll until ready
-    let sess = c.json.session;
+    let sess = c.json.session, lastSig = "", t0 = Date.now();
     for (let i = 0; i < 400 && !stopped; i++) {
       const q = sess.seatSetupInfo && sess.seatSetupInfo.queuePosition;
       if (sess.status === 2 || sess.status === 3) break;
       if (sess.status === 6 || sess.status === 7) throw new Error("Session ended while starting (status " + sess.status + ")");
-      status(q > 0 ? "In queue — position " + q : "Setting up your rig…");
+      const sig = sess.status + "/" + JSON.stringify(sess.seatSetupInfo || {});
+      if (sig !== lastSig) { lastSig = sig; log("[stream] poll status", sess.status, "seat", JSON.stringify(sess.seatSetupInfo || {}), "errorCode", sess.errorCode); }
+      status(q > 0 ? "In queue — position " + q : "Setting up your rig… (" + Math.round((Date.now() - t0) / 1000) + "s)");
       await sleep(2000);
       const p = await call("GET", "/v2/session/" + sessionId);
+      const rq = p.json.requestStatus || {};
       if (p.json.session) sess = p.json.session;
-      else log("[stream] poll", p.status, p.text.slice(0, 200));
+      else log("[stream] poll", p.status, p.text.slice(0, 400));
+      if (rq.statusCode && rq.statusCode !== 1) throw new Error("GeForce NOW: " + (rq.statusDescription || rq.statusCode) + (rq.unifiedErrorCode ? " (" + rq.unifiedErrorCode + ")" : ""));
     }
     if (stopped) return { stop };
     if (sess.status !== 2 && sess.status !== 3) throw new Error("Timed out waiting for a rig");
@@ -173,7 +177,8 @@ export async function startStream(o) {
 
     // 3. signaling endpoint
     const ci = (sess.connectionInfo || []).find((x) => x.usage === 14) || (sess.connectionInfo || []).find((x) => x.usage === 2) || {};
-    const address = ci.ip || ci.hostName || (sess.sessionControlInfo && sess.sessionControlInfo.ip);
+    let address = ci.ip || ci.hostName;
+    if (!address || address[0] === ".") address = sess.sessionControlInfo && sess.sessionControlInfo.ip;
     const port = ci.port || 443;
     let rp = ci.resourcePath || "/nvst/";
     if (rp[0] !== "/") rp = "/" + rp;
