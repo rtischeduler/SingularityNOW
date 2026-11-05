@@ -43,23 +43,29 @@ details pre{background:#0b0d10;border:1px solid var(--line);border-radius:10px;p
 <section class="card active" id="boot"><div class="spin"></div><p id="boot-status" style="text-align:center">Loading…</p></section>
 <section class="card" id="email-card">
 <h1>Singularity<b>NOW</b></h1>
-<p>Sign in to your existing GeForce NOW account. NVIDIA emails you a verification code and everything goes through the browser proxy.</p>
+<p>Sign in to your existing GeForce NOW account. NVIDIA emails you a sign-in link, and everything goes through the browser proxy.</p>
 <p class="err" id="email-error" hidden></p>
 <form id="email-form">
 <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="NVIDIA account email" required>
-<button class="btn" id="send" type="submit">Send code</button>
+<button class="btn" id="send" type="submit">Continue</button>
 </form>
 <small>Sign-in only. This client never creates accounts.</small>
 </section>
+<section class="card" id="wait-card">
+<h1 id="wait-title">Working…</h1>
+<p id="wait-desc"></p>
+<div class="spin"></div>
+<button class="btn ghost" id="cancel" type="button">Cancel</button>
+</section>
 <section class="card" id="code-card">
-<h1>Enter your code</h1>
-<p>We asked NVIDIA to email a verification code to <b id="sent-to"></b>.</p>
+<h1 id="code-title">Enter your code</h1>
+<p id="code-desc"></p>
 <p class="err" id="code-error" hidden></p>
 <form id="code-form">
 <input class="otp" id="code" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" required>
 <button class="btn" id="verify" type="submit">Verify</button>
 </form>
-<button class="btn ghost" id="back" type="button">Use a different email</button>
+<button class="btn ghost" id="back" type="button">Cancel</button>
 </section>
 <section class="card" id="account">
 <h1>Signed in</h1>
@@ -384,17 +390,37 @@ const TOKEN_HEADERS = {
   Origin: "https://nvfile",
   Referer: "https://nvfile/",
 };
+const EP = {
+  check: "/api/1/frontend/oauth/account/check",
+  next: "/api/1/frontend/oauth/user/next",
+  factors: "/api/1/frontend/oauth/auth/factor/challenge/factors",
+  init: "/api/1/frontend/oauth/auth/factor/challenge/initialize",
+  verify: "/api/1/frontend/oauth/auth/factor/challenge/verify",
+  poll: "/api/1/frontend/oauth/user/email/auth/poll",
+  consent: "/api/1/frontend/oauth/user/consent",
+};
 
 const $ = (id) => document.getElementById(id);
-const screens = ["boot", "email-card", "code-card", "account"];
+const screens = ["boot", "email-card", "wait-card", "code-card", "account"];
 const show = (name) => screens.forEach((s) => $(s).classList.toggle("active", s === name));
 const say = (t) => { $("boot-status").textContent = t; };
 const form = (o) => new URLSearchParams(o).toString();
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const setWait = (title, desc) => { $("wait-title").textContent = title; $("wait-desc").textContent = desc || ""; show("wait-card"); };
+
+const JARVIS_DEVICE = (() => {
+  let d = store.get("WB_DEVID");
+  if (typeof d !== "string" || !d) {
+    d = crypto.randomUUID();
+    store.set("WB_DEVID", d);
+  }
+  return d;
+})();
 
 const maskText = (s) => String(s)
   .replace(/eyJ[\w-]+\.[\w-]+\.[\w-]+/g, "<jwt>")
   .replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, "<email>")
-  .replace(/("(?:code|validation|device_code|access_token|refresh_token|id_token|client_token|key)"\s*:\s*")[^"]*(")/g, "$1<hidden>$2")
+  .replace(/("(?:code|validation|otp|device_code|access_token|refresh_token|id_token|client_token|key)"\s*:\s*")[^"]*(")/g, "$1<hidden>$2")
   .replace(/((?:code|code_verifier|validation|key)=)[^&\s"]+/g, "$1<hidden>");
 const logLines = [];
 function log(...a) {
@@ -484,6 +510,11 @@ async function http(url, { method = "GET", headers = {}, body, follow = true, st
 }
 
 let flow = null;
+let run = 0;
+let codeWaiter = null;
+
+const cancelled = () => Object.assign(new Error("cancelled"), { cancelled: true });
+const alive = (mine) => { if (mine !== run) throw cancelled(); };
 
 async function beginFlow() {
   jar.length = 0;
@@ -521,7 +552,7 @@ async function beginFlow() {
   flow = { verifier, key, email: "" };
 }
 
-async function api(path, body, method = "POST") {
+async function api(path, body, method = "POST", quiet = false) {
   if (!flow || !flow.key) throw new Error("No active sign-in session");
   const headers = {
     Accept: "application/json, text/plain, */*",
@@ -540,7 +571,7 @@ async function api(path, body, method = "POST") {
   try { json = JSON.parse(r.text); } catch {}
   if (json && typeof json.key === "string") flow.key = json.key;
   const ok = r.status >= 200 && r.status < 300;
-  log("[api]", method, path, r.status, r.text.slice(0, 400));
+  if (!(quiet && r.status === 202)) log("[api]", method, path, r.status, r.text.slice(0, 400));
   return { status: r.status, ok, json, text: r.text };
 }
 
@@ -550,53 +581,96 @@ const apiError = (r) => {
   return new Error(msg ? String(msg) : "NVIDIA returned " + r.status);
 };
 
-const accountMissing = (r) => {
-  const j = r.json || {};
-  const flags = [j.exist, j.exists, j.accountExists, j.userExists, j.existing, j.registered, j.found];
-  return r.status === 404 || flags.some((v) => v === false);
-};
-
-async function requestCode(email) {
-  await beginFlow();
-  const check = await api("/api/1/frontend/oauth/account/check", { email });
-  if (!check.ok) throw apiError(check);
-  if (accountMissing(check)) throw new Error("No NVIDIA account was found for that email. This client only signs in to existing accounts.");
-  const sent = await api("/api/1/frontend/oauth/user/requestverify", { email });
-  if (!sent.ok) throw apiError(sent);
-  flow.email = email;
+function askCode(title, desc, err) {
+  $("code-title").textContent = title;
+  $("code-desc").textContent = desc;
+  $("code-error").textContent = err || "";
+  $("code-error").hidden = !err;
+  $("code").value = "";
+  show("code-card");
+  $("code").focus();
+  return new Promise((resolve, reject) => { codeWaiter = { resolve, reject }; });
 }
 
-function findRedirect(v) {
-  let hit = null;
-  (function walk(x) {
-    if (hit) return;
-    if (typeof x === "string") {
-      if (/^https?:\/\//i.test(x) && (x.startsWith(REDIRECT) || /\/callback\//.test(x) || /[?&]code=/.test(x))) hit = x;
-    } else if (Array.isArray(x)) x.forEach(walk);
-    else if (x && typeof x === "object") Object.values(x).forEach(walk);
-  })(v);
-  return hit;
+async function selectFactor() {
+  const r = await api(EP.factors, null, "GET");
+  if (!r.ok) throw apiError(r);
+  const list = Array.isArray(r.json) ? r.json : r.json.factors || r.json.values || [];
+  const pick = list.find((f) => /email/i.test(f.type)) || list[0];
+  if (!pick) throw new Error("NVIDIA offered no sign-in method for this account.");
+  log("[auth] factors", list.map((f) => f.type).join(","), "using", pick.type);
+  const id = pick.descriptors && pick.descriptors.length ? pick.descriptors[0].id : null;
+  const init = await api(EP.init, { type: pick.type, id });
+  if (!init.ok) throw apiError(init);
 }
 
-async function advance(first) {
-  let found = findRedirect(first && first.json);
-  for (let i = 0; i < 6 && !found; i++) {
-    const n = await api("/api/1/frontend/oauth/user/next", {});
+async function waitForEmail(mine) {
+  setWait("Check your email", "NVIDIA sent a sign-in message to " + flow.email + ". Open the link in it and this page continues by itself.");
+  const until = Date.now() + 10 * 60000;
+  while (Date.now() < until) {
+    await sleep(3000);
+    alive(mine);
+    const r = await api(EP.poll, null, "GET", true);
+    if (r.status === 200) return;
+    if (r.status === 400) throw new Error("The email sign-in was declined or expired.");
+  }
+  throw new Error("Timed out waiting for the email sign-in.");
+}
+
+async function totpChallenge(mine) {
+  let err = "";
+  for (let i = 0; i < 3; i++) {
+    const code = await askCode("Enter your code", "Enter the code from your authenticator app.", err);
+    alive(mine);
+    setWait("Verifying…");
+    const v = await api(EP.verify, { otp: code });
+    if (v.ok) return;
+    err = apiError(v).message;
+  }
+  throw new Error("Too many wrong codes.");
+}
+
+async function finishStage(page) {
+  const url = page.externalUrl || ACCOUNTS + EP.next + "?key=" + encodeURIComponent(flow.key) + "&state=finish";
+  const r = await http(url, { headers: { ...PAGE_HEADERS, Referer: LOGIN_ORIGIN + "/" }, stopAt: (next) => next.startsWith(REDIRECT) });
+  log("[auth] finish chain", r.chain.join(" > "));
+  if (r.location && r.location.startsWith(REDIRECT)) return r.location;
+  throw new Error("NVIDIA did not complete the sign-in (status " + r.status + ")");
+}
+
+async function drive(mine) {
+  let last = "", repeats = 0;
+  for (let i = 0; i < 30; i++) {
+    alive(mine);
+    const n = await api(EP.next, {});
     if (!n.ok) throw apiError(n);
-    found = findRedirect(n.json);
-    if (!found) log("[auth] next stage", JSON.stringify(n.json).slice(0, 300));
+    const page = n.json.page || "";
+    log("[auth] stage", page, JSON.stringify(n.json.values || {}).slice(0, 200));
+    repeats = page === last ? repeats + 1 : 0;
+    last = page;
+    if (repeats >= 2) throw new Error("NVIDIA kept returning the " + page + " step. Open the debug log.");
+    if (page === "Finish") return finishStage(n.json);
+    if (page === "NFactorChallengeSelect") { setWait("Contacting NVIDIA…", ""); await selectFactor(); continue; }
+    if (page === "NFactorEmailAuthWait") { await waitForEmail(mine); continue; }
+    if (page === "NFactorTOTPChallenge") { await totpChallenge(mine); continue; }
+    if (page === "Consent") {
+      if (!confirm("NVIDIA asks you to approve this app for your account. Approve?")) throw new Error("Approval was declined.");
+      const c = await api(EP.consent, {});
+      if (!c.ok) throw apiError(c);
+      continue;
+    }
+    if (page === "CreateAccount" || page === "ThirdPartyAccountCreate") throw new Error("No NVIDIA account exists for that email. This client only signs in to existing accounts.");
+    if (page === "Captcha") throw new Error("NVIDIA wants a captcha for this sign-in, which this client can't show yet.");
+    if (page === "LogIn" || page === "AccountCheck") {
+      const err = n.json.values && n.json.values.jarvis_error;
+      throw new Error(err ? "NVIDIA said: " + (err.error || JSON.stringify(err)) : "NVIDIA sent you back to the sign-in step.");
+    }
+    throw new Error("NVIDIA asked for a step this client does not handle yet: " + (page || "unknown") + ". Open the debug log.");
   }
-  if (!found) throw new Error("NVIDIA asked for a step this client does not handle yet. Open the debug log for details.");
-  return found;
+  throw new Error("Sign-in took too many steps.");
 }
 
-async function claimTokens(url) {
-  let landed = url;
-  if (!url.startsWith(REDIRECT)) {
-    const r = await http(url, { headers: PAGE_HEADERS, stopAt: (next) => next.startsWith(REDIRECT) });
-    log("[auth] callback chain", r.chain.join(" > "));
-    landed = r.location || "";
-  }
+async function claimTokens(landed) {
   if (!landed.startsWith(REDIRECT)) throw new Error("NVIDIA did not hand back an authorization code");
   const code = new URL(landed).searchParams.get("code");
   if (!code) throw new Error("NVIDIA did not hand back an authorization code");
@@ -618,11 +692,16 @@ async function userinfo(token) {
   try { return JSON.parse(r.text); } catch { return {}; }
 }
 
-async function verifyCode(code) {
-  const v = await api("/api/1/frontend/oauth/nonuser/email/authentication", { validation: code });
-  if (!v.ok) throw apiError(v);
-  const redirect = await advance(v);
-  return claimTokens(redirect);
+async function startLogin(email) {
+  const mine = ++run;
+  await beginFlow();
+  alive(mine);
+  flow.email = email;
+  const first = await api(EP.check, { email, rememberLogin: false, deviceId: JARVIS_DEVICE });
+  if (!first.ok) throw apiError(first);
+  const landed = await drive(mine);
+  alive(mine);
+  return claimTokens(landed);
 }
 
 function setError(id, t) {
@@ -631,51 +710,41 @@ function setError(id, t) {
   e.hidden = !t;
 }
 
-let busy = false;
-
 async function onEmail(ev) {
   ev.preventDefault();
-  if (busy) return;
-  busy = true;
   setError("email-error", "");
   const email = $("email").value.trim();
-  $("send").disabled = true;
-  $("send").textContent = "Contacting NVIDIA…";
+  setWait("Contacting NVIDIA…", "");
   try {
-    await requestCode(email);
-    $("sent-to").textContent = email;
-    $("code").value = "";
-    setError("code-error", "");
-    show("code-card");
-    $("code").focus();
-  } catch (e) {
-    flow = null;
-    setError("email-error", e && e.message ? e.message : String(e));
-  } finally {
-    busy = false;
-    $("send").disabled = false;
-    $("send").textContent = "Send code";
-  }
-}
-
-async function onCode(ev) {
-  ev.preventDefault();
-  if (busy) return;
-  busy = true;
-  setError("code-error", "");
-  $("verify").disabled = true;
-  $("verify").textContent = "Verifying…";
-  try {
-    const tokens = await verifyCode($("code").value.trim());
+    const tokens = await startLogin(email);
     await finish(tokens);
     flow = null;
   } catch (e) {
-    setError("code-error", e && e.message ? e.message : String(e));
-  } finally {
-    busy = false;
-    $("verify").disabled = false;
-    $("verify").textContent = "Verify";
+    if (e && e.cancelled) return;
+    log("[auth] failed", (e && e.message) || e);
+    flow = null;
+    setError("email-error", e && e.message ? e.message : String(e));
+    show("email-card");
   }
+}
+
+function onCode(ev) {
+  ev.preventDefault();
+  if (!codeWaiter) return;
+  const w = codeWaiter;
+  codeWaiter = null;
+  w.resolve($("code").value.trim());
+}
+
+function cancelLogin() {
+  run++;
+  if (codeWaiter) {
+    codeWaiter.reject(cancelled());
+    codeWaiter = null;
+  }
+  flow = null;
+  setError("email-error", "");
+  show("email-card");
 }
 
 async function finish(tokens) {
@@ -710,6 +779,7 @@ function render(session) {
 }
 
 function signOut() {
+  run++;
   flow = null;
   saveStore(null);
   setError("email-error", "");
@@ -722,7 +792,8 @@ async function copy(text, btn) {
 
 $("email-form").addEventListener("submit", onEmail);
 $("code-form").addEventListener("submit", onCode);
-$("back").addEventListener("click", () => { flow = null; setError("code-error", ""); show("email-card"); });
+$("cancel").addEventListener("click", cancelLogin);
+$("back").addEventListener("click", cancelLogin);
 $("signout").addEventListener("click", signOut);
 $("copy-token").addEventListener("click", (e) => { const s = loadStore(); if (s) copy(s.tokens.access_token, e.currentTarget); });
 $("copy-log").addEventListener("click", (e) => copy(logLines.join("\n"), e.currentTarget));
