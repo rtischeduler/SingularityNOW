@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SingularityNOW</title>
+<style>
+:root{--bg:#0b0d10;--card:#14181d;--line:#262c34;--ink:#f2f5f7;--dim:#98a2ad;--green:#76b900;--warn:#e6a23c;--danger:#ff6b6b}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(1200px 600px at 50% -10%,#1b2a0b 0%,var(--bg) 60%);color:var(--ink);font:500 15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:grid;place-items:center;padding:16px;-webkit-font-smoothing:antialiased}
+.card{width:min(420px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px 24px;display:none;flex-direction:column;gap:16px}
+.card.active{display:flex}
+h1{font-size:1.35rem;letter-spacing:.01em}
+h1 b{color:var(--green)}
+p{color:var(--dim)}
+.btn{appearance:none;border:0;border-radius:12px;padding:13px 18px;font:inherit;font-weight:700;cursor:pointer;background:var(--green);color:#0b0d10;text-align:center;text-decoration:none;display:block}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--dim)}
+.code{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#0b0d10;border:1px dashed var(--line);border-radius:12px;padding:14px 16px}
+.code span{font:700 1.6rem/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.18em}
+.code button{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 10px;font:inherit;cursor:pointer}
+.err{color:var(--danger);font-size:.9rem}
+.badge{display:inline-block;align-self:flex-start;border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:.8rem;color:var(--dim)}
+.badge.ok{color:var(--green);border-color:var(--green)}
+.badge.warn{color:var(--warn);border-color:var(--warn)}
+.big{font-size:1.1rem;font-weight:700;word-break:break-all}
+.spin{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--green);animation:s 1s linear infinite;align-self:center}
+@keyframes s{to{transform:rotate(360deg)}}
+.row{display:flex;gap:10px}.row>*{flex:1}
+small{color:var(--dim)}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+</style>
+</head>
+<body>
+<main>
+<section class="card active" id="boot"><div class="spin"></div><p id="boot-status" style="text-align:center">Loading…</p></section>
+<section class="card" id="signin">
+<h1>Singularity<b>NOW</b></h1>
+<p>Sign in to GeForce NOW with your NVIDIA account. You'll finish on NVIDIA's own page, where it asks for your email and sends you a verification code.</p>
+<p class="err" id="signin-error" hidden></p>
+<button class="btn" id="start">Sign in with NVIDIA</button>
+<small>Traffic to NVIDIA goes through the browser proxy.</small>
+</section>
+<section class="card" id="pending">
+<h1>Finish signing in</h1>
+<p>A tab for <b id="verify-host"></b> should have opened. Enter your email, then the verification code NVIDIA emails you. Keep this page open.</p>
+<div class="code" id="code-row"><span id="user-code"></span><button id="copy-code">Copy</button></div>
+<a class="btn" id="open-link" target="_blank" rel="noopener">Open NVIDIA sign-in</a>
+<div class="spin"></div>
+<small id="countdown" style="text-align:center"></small>
+<button class="btn ghost" id="cancel">Cancel</button>
+</section>
+<section class="card" id="account">
+<h1>Signed in</h1>
+<div class="big" id="acct-email"></div>
+<p id="acct-name"></p>
+<span class="badge" id="acct-verified"></span>
+<small id="acct-exp"></small>
+<div class="row"><button class="btn ghost" id="copy-token">Copy access token</button><button class="btn ghost" id="signout">Sign out</button></div>
+</section>
+</main>
+<script type="module">
+const BAD_KEY = "WB_BAD";
+const BAD_TTL_MS = 6 * 3600000;
+const ENGINE_FAILURE_RE = /\[LoadingScreen\]\s*Engine failure/i;
+
+const classifyLog = (text) => (typeof text === "string" && ENGINE_FAILURE_RE.test(text) ? "engine-failure" : null);
+
+function parseEngineFailure(text) {
+  if (classifyLog(text) !== "engine-failure") return null;
+  const msg = /"message"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(text);
+  const code = /"errorCode"\s*:\s*(-?\d+)/.exec(text);
+  return { message: msg ? msg[1] : "", code: code ? Number(code[1]) : null };
+}
+
+function createBadList({ storage, now = () => Date.now(), ttl = BAD_TTL_MS, key = (entry) => String(entry) } = {}) {
+  const box = () => {
+    try { return storage || globalThis.localStorage || null; } catch { return null; }
+  };
+  const read = () => {
+    const s = box();
+    if (!s) return {};
+    try {
+      const v = JSON.parse(s.getItem(BAD_KEY));
+      return v && typeof v === "object" && !Array.isArray(v) ? v : {};
+    } catch { return {}; }
+  };
+  const live = () => {
+    const t = now(), out = {};
+    for (const [k, ts] of Object.entries(read())) if (typeof ts === "number" && t - ts < ttl) out[k] = ts;
+    return out;
+  };
+  return {
+    has: (entry) => Object.hasOwn(live(), key(entry)),
+    add(entry) {
+      const s = box();
+      if (!s) return;
+      const v = live();
+      v[key(entry)] = now();
+      try { s.setItem(BAD_KEY, JSON.stringify(v)); } catch {}
+    },
+    clear() {
+      const s = box();
+      try { if (s) s.removeItem(BAD_KEY); } catch {}
+    },
+  };
+}
+
+function createWatchdog({ current, markBad, switchWisp, relaunch, log = () => {}, max = 2 }) {
+  let used = 0, busy = false, lastSig = null, shared = false;
+  return {
+    get used() { return used; },
+    async feed(text) {
+      if (classifyLog(text) !== "engine-failure") return false;
+      if (busy || used >= max || shared) return false;
+      const info = parseEngineFailure(text);
+      const sig = info ? info.code + "|" + info.message : "";
+      if (info) log("engine failure detail: code=" + info.code + " message=" + info.message);
+      if (lastSig !== null && sig === lastSig) {
+        shared = true;
+        log("same engine failure on " + (used + 1) + " servers, not server-specific; not retrying (check Roblox API/chat traffic through the proxy)");
+        return false;
+      }
+      busy = true;
+      used++;
+      try {
+        const failed = current();
+        if (failed) markBad(failed);
+        log("engine failed on " + failed + ", trying another server (" + used + "/" + max + ")");
+        const next = await switchWisp(failed ? [failed] : []);
+        if (!next || next === failed) {
+          log("no other server available");
+          return false;
+        }
+        await relaunch();
+        lastSig = sig;
+        return true;
+      } catch (e) {
+        log("recovery failed: " + ((e && e.message) || e));
+        return false;
+      } finally {
+        busy = false;
+      }
+    },
+  };
+}
+
+
+const KSTUFF = "lotsacookie/kstuff";
+const STORAGE = "TongSherbet/storage";
+const LIST_PATH = "Assets/json/wss.json";
+const jsd = (repo) => [
+  `https://cdn.jsdelivr.net/gh/${repo}@main/`,
+  `https://fastly.jsdelivr.net/gh/${repo}@main/`,
+  `https://gcore.jsdelivr.net/gh/${repo}@main/`,
+];
+const KSTUFF_MIRRORS = [...jsd(KSTUFF), `https://raw.githubusercontent.com/${KSTUFF}/main/`, `https://cdn.statically.io/gh/${KSTUFF}/main/`];
+const STORAGE_MIRRORS = [...jsd(STORAGE), `https://raw.githubusercontent.com/${STORAGE}/main/`];
+const BUILTIN = [
+  "cdn.northstreetumc.org", "cdn.vipersfutbol.com", "cdn.pcesc.org", "cdn.kcchallengevbc.com",
+  "cdn.slcbmooc.org", "cdn.topstargym.net", "cdn.goaplytexas.org", "cdn.clearfieldswimming.com",
+  "wss://athollcottage.com/connection/", "wss://api.personalloanonline.net/ws/",
+  "wss://kristenblackburnvolleyballcamps.com/socket/", "wss://southpadreislandkiteboarding.com/socket/",
+];
+const FALLBACK = "wss://api.personalloanonline.net/ws/";
+
+const HOST_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i;
+const WSS_RE = /^wss:\/\/[a-z0-9.-]+(:\d{1,5})?(\/[\w\-./]*)?$/i;
+const isBackup = (e) => e.includes("://");
+const toWss = (e) => {
+  e = String(e || "").trim();
+  if (!e) return null;
+  const u = isBackup(e) ? e : `wss://${e}/`;
+  return u.endsWith("/") ? u : u + "/";
+};
+const bad = createBadList({ key: toWss });
+const markWispBad = (entry) => bad.add(entry);
+function decodeLoaderList(src, hostRe, wssRe, max, depth = 0) {
+  if (depth > 3 || typeof src !== "string") return [];
+  let code = null;
+  try {
+    const stub = new Proxy({}, { get: () => (a) => { if (code === null && typeof a === "string") code = a; } });
+    new Function("globalThis", src)(stub);
+  } catch {}
+  if (!code) return [];
+  const arrays = code.match(/\[(?:\s*"[^"\\]{3,120}"\s*,?)+\s*\]/g) || [];
+  for (const arr of arrays) {
+    let vals;
+    try { vals = JSON.parse(arr.replace(/,\s*\]$/, "]")); } catch { continue; }
+    const out = [];
+    for (const v of vals) {
+      const value = String(v).trim();
+      if ((hostRe.test(value) || wssRe.test(value)) && !out.includes(value)) out.push(value);
+      if (out.length >= max) break;
+    }
+    if (out.length >= 3 && out.length >= vals.length * 0.6) return out;
+  }
+  return decodeLoaderList(code, hostRe, wssRe, max, depth + 1);
+}
+function parseServerList(src, decode = (s) => decodeLoaderList(s, HOST_RE, WSS_RE, 32)) {
+  if (typeof src !== "string") return [];
+  const text = src.replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
+  const block = text.match(/serverList\s*=\s*\[([\s\S]*?)\]\s*[;,]/);
+  if (!block) return decode(src);
+  const item = /(["'])((?:\\.|(?!\1)[^\\])*)\1(\s*\.split\(\s*(?:""|'')\s*\)\s*\.reverse\(\)\s*\.join\(\s*(?:""|'')\s*\))?/g;
+  const out = [];
+  let m;
+  while ((m = item.exec(block[1]))) {
+    const value = (m[3] ? [...m[2]].reverse().join("") : m[2]).trim();
+    if ((HOST_RE.test(value) || WSS_RE.test(value)) && !out.includes(value)) out.push(value);
+    if (out.length >= 32) break;
+  }
+  return out;
+}
+function decodeInSandbox(src, ms = 4000) {
+  return new Promise((resolve) => {
+    const f = document.createElement("iframe");
+    f.sandbox = "allow-scripts";
+    f.style.display = "none";
+    const done = (v) => { clearTimeout(t); removeEventListener("message", on); f.remove(); resolve(v); };
+    const t = setTimeout(() => done([]), ms);
+    const on = (e) => { if (e.source === f.contentWindow && e.data && e.data.wbDecoded) done(e.data.list || []); };
+    addEventListener("message", on);
+    f.srcdoc = `<script>const decode=${decodeLoaderList.toString()};` +
+      `addEventListener("message",e=>{let l=[];try{l=decode(e.data.src,new RegExp(e.data.h,"i"),new RegExp(e.data.w,"i"),32)}catch{}` +
+      `parent.postMessage({wbDecoded:1,list:l},"*")});parent.postMessage({wbReady:1},"*")<\/script>`;
+    const ready = (e) => {
+      if (e.source !== f.contentWindow || !e.data || !e.data.wbReady) return;
+      removeEventListener("message", ready);
+      f.contentWindow.postMessage({ src, h: HOST_RE.source, w: WSS_RE.source }, "*");
+    };
+    addEventListener("message", ready);
+    document.body.append(f);
+  });
+}
+const parseInBrowser = async (src) => parseServerList(src, (s) => decodeInSandbox(s));
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+async function fetchWith(url, type, ms = 4000) {
+  const c = new AbortController(), t = setTimeout(() => c.abort(), ms);
+  try {
+    const r = await fetch(url + (url.includes("?") ? "&" : "?") + "t=" + Date.now(), { cache: "no-store", signal: c.signal });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return await r[type]();
+  } finally { clearTimeout(t); }
+}
+const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const b64ToText = (b) => new TextDecoder().decode(Uint8Array.from(atob(b.trim()), (c) => c.charCodeAt(0)));
+function parseWispList(json) {
+  const b64 = Array.isArray(json) ? json.find((v) => typeof v === "string" && v.trim()) : json;
+  if (typeof b64 !== "string") return [];
+  let data;
+  try { data = JSON.parse(b64ToText(b64)); } catch { return []; }
+  const out = [];
+  (function walk(v) {
+    if (typeof v === "string" && /^wss:\/\//i.test(v.trim())) out.push(v.trim());
+    else if (Array.isArray(v)) v.forEach(walk);
+    else if (v && typeof v === "object") Object.values(v).forEach(walk);
+  })(data);
+  return [...new Set(out)];
+}
+async function fetchWispList(mirrors = KSTUFF_MIRRORS) {
+  try { return parseWispList(await Promise.any(mirrors.map((m) => fetchWith(m + LIST_PATH, "json", 5000)))); }
+  catch { return []; }
+}
+async function syncStorageList(mirrors = STORAGE_MIRRORS) {
+  const cached = store.get("WB_SYNC");
+  const cachedList = cached && Array.isArray(cached.list) ? cached.list.filter((u) => HOST_RE.test(u) || WSS_RE.test(u)) : [];
+  if (cachedList.length && Date.now() - (cached.ts || 0) < 3600000) return cachedList;
+  const failed = store.get("WB_SYNCF");
+  if (failed && Date.now() - (failed.ts || 0) < 600000) return cachedList;
+  for (const m of mirrors) {
+    try {
+      const list = await parseInBrowser(await fetchWith(m + "loader.js", "text", 3500));
+      if (!list.length) throw new Error("no servers in loader.js");
+      store.set("WB_SYNC", { ts: Date.now(), list });
+      return list;
+    } catch (e) { console.warn("[wisp] storage sync failed:", m, e && e.message || e); }
+  }
+  store.set("WB_SYNCF", { ts: Date.now() });
+  return cachedList;
+}
+function probeWisp(entry, timeoutMs = 3000) {
+  return new Promise((resolve) => {
+    let ws;
+    try { ws = new WebSocket(toWss(entry)); } catch { return resolve(null); }
+    ws.binaryType = "arraybuffer";
+    let connected = false, sentAt = 0;
+    const streamId = (Math.floor(Math.random() * 0xFFFFFFFE) + 1) >>> 0;
+    const finish = (ping) => { clearTimeout(timer); ws.onmessage = ws.onerror = ws.onclose = null; try { ws.close(); } catch {} resolve(ping); };
+    const timer = setTimeout(() => finish(null), timeoutMs);
+    ws.onmessage = (e) => {
+      if (!(e.data instanceof ArrayBuffer) || e.data.byteLength < 5) return;
+      const v = new DataView(e.data), type = v.getUint8(0), stream = v.getUint32(1, true);
+      if (!connected) {
+        if (type === 5 && stream === 0) ws.send(new Uint8Array([5, 0, 0, 0, 0, 2, 1]));
+        else if (type === 3 && stream === 0) {
+          connected = true;
+          const host = new TextEncoder().encode("127.0.0.1");
+          const buf = new ArrayBuffer(8 + host.length), dv = new DataView(buf);
+          dv.setUint8(0, 1); dv.setUint32(1, streamId, true); dv.setUint8(5, 1); dv.setUint16(6, 69, true);
+          new Uint8Array(buf).set(host, 8);
+          sentAt = performance.now();
+          ws.send(buf);
+        }
+        return;
+      }
+      if (stream === streamId) finish(Math.round(performance.now() - sentAt));
+    };
+    ws.onerror = ws.onclose = () => finish(null);
+  });
+}
+
+async function firstAlive(entries, say, label, waveSize = 6) {
+  const alive = [];
+  for (let i = 0; i < entries.length && !alive.length; i += waveSize) {
+    const wave = entries.slice(i, i + waveSize);
+    say(`${label} (${Math.min(i + waveSize, entries.length)}/${entries.length})…`);
+    const pings = await Promise.all(wave.map((e) => probeWisp(e)));
+    wave.forEach((e, j) => { if (pings[j] !== null) alive.push({ entry: e, ping: pings[j] }); });
+  }
+  return alive.sort((a, b) => a.ping - b.ping)[0] || null;
+}
+function provisionalWisp(network) {
+  const last = store.get("WB_LAST");
+  const url = toWss(last && last.entry && !bad.has(last.entry) ? last.entry : FALLBACK);
+  network.set_websocket(url);
+  return url;
+}
+async function pickWisp(network, say = () => {}, opts = {}) {
+  const budgetMs = opts.budgetMs || 15000;
+  const excluded = new Set((opts.exclude || []).map(toWss));
+  const allowed = (entry) => !excluded.has(toWss(entry));
+  const prefer = (list) => {
+    const ok = list.filter(allowed);
+    return [...ok.filter((e) => !bad.has(e)), ...ok.filter((e) => bad.has(e))];
+  };
+  const apply = (entry) => {
+    const url = toWss(entry);
+    network.set_websocket(url);
+    try { network.set_wisp_pool([url]); } catch {}
+    store.set("WB_LAST", { entry, ts: Date.now() });
+    return url;
+  };
+  const search = async () => {
+    const last = store.get("WB_LAST");
+    if (last && last.entry && allowed(last.entry) && !bad.has(last.entry) && Date.now() - last.ts < 600000 && (await probeWisp(last.entry)) !== null) return apply(last.entry);
+
+    say("Syncing wisp list…");
+    const synced = await syncStorageList(opts.storageBases ? [...opts.storageBases, ...STORAGE_MIRRORS.filter((m) => !opts.storageBases.includes(m))] : STORAGE_MIRRORS);
+    const all = prefer([...new Set([...synced, ...BUILTIN])]);
+    const primary = all.filter((e) => !isBackup(e));
+    const hit = await firstAlive(primary, say, "Testing wisp servers");
+    if (hit) return apply(hit.entry);
+
+    say("Trying backup wisps…");
+    const remote = await fetchWispList(opts.kstuffBases ? [...opts.kstuffBases, ...KSTUFF_MIRRORS.filter((m) => !opts.kstuffBases.includes(m))] : KSTUFF_MIRRORS);
+    const backups = prefer([...new Set([...all.filter(isBackup), FALLBACK, ...shuffle(remote.filter((u) => !all.includes(u))).slice(0, 16)])]);
+    const bhit = await firstAlive(backups, say, "Testing backup wisps");
+    if (bhit) return apply(bhit.entry);
+    return null;
+  };
+  const timeout = new Promise((r) => setTimeout(() => r(null), budgetMs));
+  try {
+    const url = await Promise.race([search(), timeout]);
+    if (url) return url;
+  } catch (e) { console.warn("[wisp] pick failed", e); }
+  console.warn("[wisp] no wisp validated, using fallback");
+  return apply([FALLBACK, ...BUILTIN.filter(isBackup)].find(allowed) || FALLBACK);
+}
+
+
+const DIST = "dist/sandstone.mjs";
+const BASES = [
+  "https://cdn.jsdelivr.net/gh/lotsacookie/Singuloxy@main/",
+  "https://fastly.jsdelivr.net/gh/lotsacookie/Singuloxy@main/",
+];
+
+async function loadSandstone(log) {
+  for (const base of BASES) {
+    try { return await import(base + DIST); } catch { log("[proxy] sandstone import failed", base); }
+  }
+  const code = await (await fetch("https://raw.githubusercontent.com/lotsacookie/Singuloxy/main/" + DIST)).text();
+  return import(URL.createObjectURL(new Blob([code], { type: "text/javascript" })));
+}
+
+let ready = null;
+function getProxy({ log = () => {}, say = () => {} } = {}) {
+  return (ready ||= (async () => {
+    say("Loading proxy…");
+    const sandstone = await loadSandstone(log);
+    provisionalWisp(sandstone.network);
+    for (let i = 0; i < 300 && !sandstone.libcurl.ready; i++) await new Promise((r) => setTimeout(r, 100));
+    if (!sandstone.libcurl.ready) throw new Error("libcurl did not load");
+    const wisp = await pickWisp(sandstone.network, say);
+    log("[proxy] wisp", String(wisp));
+    return { libcurl: sandstone.libcurl, network: sandstone.network, wisp: String(wisp) };
+  })().catch((e) => { ready = null; throw e; }));
+}
+
+window.__getProxy = getProxy;
+
+const STARFLEET = "https://login.nvidia.com";
+const CLIENT_ID = "ZU7sPN-miLujMD95LfOQ453IB0AtjM8sMyvgJ9wCXEQ";
+const SCOPE = "openid consent email tk_client age";
+const DEVICE_ID = "gfnclient";
+const DISPLAY_NAME = "SingularityNOW";
+const STORE = "singularitynow.session";
+
+const $ = (id) => document.getElementById(id);
+const screens = ["boot", "signin", "pending", "account"];
+const show = (name) => screens.forEach((s) => $(s).classList.toggle("active", s === name));
+const say = (t) => { $("boot-status").textContent = t; };
+const form = (o) => new URLSearchParams(o).toString();
+const FORM_HEADERS = { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8", Accept: "application/json" };
+
+const loadStore = () => { try { return JSON.parse(localStorage.getItem(STORE) || "null"); } catch { return null; } };
+const saveStore = (v) => { try { v ? localStorage.setItem(STORE, JSON.stringify(v)) : localStorage.removeItem(STORE); } catch {} };
+
+const jwt = (t) => {
+  try {
+    const p = t.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    return JSON.parse(decodeURIComponent(atob(p).split("").map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0")).join("")));
+  } catch { return {}; }
+};
+
+
+
+async function post(path, body) {
+  const { libcurl } = await window.__getProxy({ log: (...a) => console.log(...a), say });
+  const r = await libcurl.fetch(STARFLEET + path, { method: "POST", headers: FORM_HEADERS, body: form(body) });
+  let json = {};
+  try { json = JSON.parse(await r.text()); } catch {}
+  return { status: r.status, ok: r.ok, json };
+}
+
+async function get(path, token) {
+  const { libcurl } = await window.__getProxy({ log: (...a) => console.log(...a), say });
+  const r = await libcurl.fetch(STARFLEET + path, { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
+  let json = {};
+  try { json = JSON.parse(await r.text()); } catch {}
+  return { status: r.status, ok: r.ok, json };
+}
+
+let run = 0;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function setError(t) {
+  const e = $("signin-error");
+  e.textContent = t || "";
+  e.hidden = !t;
+}
+
+async function startSignIn() {
+  const mine = ++run;
+  setError("");
+  $("start").disabled = true;
+  $("start").textContent = "Connecting…";
+  try {
+    const d = await post("/device/authorize", { client_id: CLIENT_ID, scope: SCOPE, device_id: DEVICE_ID, display_name: DISPLAY_NAME });
+    if (!d.ok || !d.json.device_code) throw new Error(d.json.error_description || d.json.error || "NVIDIA refused the sign-in request (" + d.status + ")");
+    const info = d.json;
+    const link = info.verification_uri_complete || info.verification_uri;
+    $("user-code").textContent = info.user_code || "";
+    $("code-row").hidden = !info.user_code;
+    $("open-link").href = link;
+    $("open-link").textContent = "Open NVIDIA sign-in";
+    $("verify-host").textContent = (() => { try { return new URL(info.verification_uri || link).host; } catch { return "login.nvidia.com"; } })();
+    show("pending");
+    window.open(link, "_blank", "noopener");
+    const expires = Date.now() + (info.expires_in || 600) * 1000;
+    let interval = Math.max(1, info.interval || 5);
+    while (mine === run && Date.now() < expires) {
+      await sleep(interval * 1000);
+      if (mine !== run) return;
+      $("countdown").textContent = Math.max(0, Math.round((expires - Date.now()) / 1000)) + "s left";
+      const t = await post("/token", { grant_type: "urn:ietf:params:oauth:grant-type:device_code", device_code: info.device_code, client_id: CLIENT_ID });
+      if (t.ok && t.json.access_token) return finish(t.json);
+      const err = t.json.error;
+      if (err === "authorization_pending") continue;
+      if (err === "slow_down") { interval += 5; continue; }
+      if (err === "access_denied") throw new Error("Sign-in was cancelled on NVIDIA's page.");
+      if (err === "expired_token") break;
+      if (err) throw new Error(t.json.error_description || err);
+    }
+    if (mine === run) throw new Error("The sign-in code expired. Start again.");
+  } catch (e) {
+    if (mine !== run) return;
+    show("signin");
+    setError(e && e.message ? e.message : String(e));
+  } finally {
+    $("start").disabled = false;
+    $("start").textContent = "Sign in with NVIDIA";
+  }
+}
+
+async function finish(tokens) {
+  let user = {};
+  try {
+    const u = await get("/userinfo", tokens.access_token);
+    if (u.ok) user = u.json;
+  } catch {}
+  const claims = tokens.id_token ? jwt(tokens.id_token) : {};
+  const session = {
+    at: Date.now(),
+    tokens,
+    user: {
+      sub: user.sub || claims.sub || "",
+      email: user.email || claims.email || "",
+      email_verified: user.email_verified ?? claims.email_verified ?? null,
+      name: user.preferred_username || user.name || claims.preferred_username || claims.name || "",
+    },
+  };
+  saveStore(session);
+  render(session);
+}
+
+function render(session) {
+  if (!session) { show("signin"); return; }
+  const u = session.user || {};
+  $("acct-email").textContent = u.email || "(no email returned)";
+  $("acct-name").textContent = u.name || u.sub || "";
+  const v = $("acct-verified");
+  v.textContent = u.email_verified === true ? "Email verified" : u.email_verified === false ? "Email not verified" : "Verification status unknown";
+  v.className = "badge " + (u.email_verified === true ? "ok" : u.email_verified === false ? "warn" : "");
+  const exp = session.tokens.expires_in ? new Date(session.at + session.tokens.expires_in * 1000) : null;
+  $("acct-exp").textContent = exp ? "Access token valid until " + exp.toLocaleString() : "";
+  show("account");
+}
+
+function signOut() {
+  run++;
+  saveStore(null);
+  setError("");
+  show("signin");
+}
+
+async function copy(text, btn) {
+  try { await navigator.clipboard.writeText(text); const o = btn.textContent; btn.textContent = "Copied"; setTimeout(() => (btn.textContent = o), 1200); } catch {}
+}
+
+$("start").addEventListener("click", startSignIn);
+$("cancel").addEventListener("click", () => { run++; show("signin"); });
+$("signout").addEventListener("click", signOut);
+$("copy-code").addEventListener("click", (e) => copy($("user-code").textContent, e.currentTarget));
+$("copy-token").addEventListener("click", (e) => { const s = loadStore(); if (s) copy(s.tokens.access_token, e.currentTarget); });
+
+const existing = loadStore();
+if (existing) render(existing);
+else show("signin");
+window.__getProxy({ log: (...a) => console.log(...a), say }).catch(() => {});
+
+</script>
+</body>
+</html>
