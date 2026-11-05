@@ -6,6 +6,9 @@ on:
       url:
         description: "Page to crawl (same-origin assets are saved to ref/)"
         default: "https://play.geforcenow.com"
+      extra_origins:
+        description: "Comma-separated extra origins to follow"
+        default: ""
       max_files:
         description: "Max files to crawl"
         default: "2000"
@@ -33,8 +36,8 @@ jobs:
         env:
           CRAWL_URL: ${{ inputs.url || 'https://play.geforcenow.com' }}
           MAX_FILES: ${{ inputs.max_files }}
+          EXTRA_ORIGINS: ${{ inputs.extra_origins }}
         run: |
-          rm -rf ref
           python scripts/crawl_ref.py
 
       - name: Commit ref/ to main

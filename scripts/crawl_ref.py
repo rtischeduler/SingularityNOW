@@ -4,7 +4,7 @@ from html.parser import HTMLParser
 from collections import deque
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(ROOT, "ref")
+REF = os.path.join(ROOT, "ref")
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
 MAX_FILES = int(os.environ.get("MAX_FILES", "2000"))
 
@@ -13,6 +13,9 @@ _u = urllib.parse.urlparse(CRAWL_URL)
 if _u.scheme not in ("http", "https") or not _u.netloc:
     sys.exit(f"CRAWL_URL must be a full http(s) URL, got {CRAWL_URL!r}")
 APP_ORIGIN = f"{_u.scheme}://{_u.netloc}"
+OUT = os.path.join(REF, _u.netloc)
+ORIGINS = [APP_ORIGIN] + [o.strip().rstrip("/") for o in os.environ.get("EXTRA_ORIGINS", "").split(",") if o.strip()]
+inside = lambda u: any(u.startswith(o + "/") or u == o for o in ORIGINS)
 
 def http(url, method="GET", headers=None, body=None, binary=False):
     h = {"User-Agent": UA}; h.update(headers or {})
@@ -38,6 +41,7 @@ CSS_IMP = re.compile(r"@import\s+['\"]([^'\"]+)['\"]")
 
 def local_path(url, ctype=""):
     p = urllib.parse.urlparse(url)
+    host = p.netloc
     path = p.path
     if path.endswith("/") or path == "": path += "index.html"
     elif "html" in ctype.lower() and not os.path.splitext(path)[1]: path += "/index.html"
@@ -45,7 +49,7 @@ def local_path(url, ctype=""):
     if p.query:
         stem, ext = os.path.splitext(path)
         path = f"{stem}__{hashlib.md5(p.query.encode()).hexdigest()[:8]}{ext}"
-    return os.path.normpath(os.path.join(OUT, path))
+    return os.path.normpath(os.path.join(REF, host, path))
 
 def crawl(start_url, token):
     seen, manifest, q = set(), [], deque([start_url])
@@ -62,9 +66,9 @@ def crawl(start_url, token):
             final, ctype, data = http(url)
         except Exception as e:
             print(f"  skip {key}: {e}", file=sys.stderr); continue
-        if not final.startswith(APP_ORIGIN): continue
+        if not inside(final): continue
         dest = local_path(strip(final) if urllib.parse.urlparse(final).path not in ("", "/") or not manifest else key, ctype)
-        if not dest.startswith(OUT): continue
+        if not dest.startswith(REF): continue
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         if token and token.encode() in data:
             data = data.replace(token.encode(), b"__TOKEN__")
@@ -86,7 +90,7 @@ def crawl(start_url, token):
         for f in found:
             if f.startswith(("data:", "blob:", "javascript:", "mailto:", "#")): continue
             nu = urllib.parse.urljoin(final, f)
-            if nu.startswith(APP_ORIGIN) and strip(nu) not in seen: q.append(nu)
+            if inside(nu) and strip(nu) not in seen: q.append(nu)
     return manifest
 
 if __name__ == "__main__":
