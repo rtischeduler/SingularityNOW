@@ -1,0 +1,732 @@
+{
+  "start": "https://static-login.nvidia.com/service/gfn/index.html?state=eKJlBtYMyELPUQfSE3r-rG2dbx05PJ_BNmOSq_gPrW5yJWh0WeynEC1VxjUFOee7-uHEcKx-IoW4-KUG7a85Wg&redirect_uri=https%3A%2F%2Flogin.nvidia.com%2Fcallback%2Fprovider&idp_ids=PDiAhv2kJTFeQ7WOPqiQ2tRZ7lGhR2X11dXvM4TZSxg+IsvVBA3Aj8KZ7gwwuRUhB6-tOF2o2F1wncD-XjYv100+Q0g4IWPZrHIiXS2nh3I5fg59Aq09xhtd5xjd19nhJJM+pC8KYgDzm2TMgkPO1YlOSj8PjhT57JIbdlwDfFZNZFA+HVmQH98-CMT7FBuj_X3_QPmEYhJ-zzvFvM3mwmWwczw+SBcX86bSGvOo6kgTpV_dRtqSs_3uU0hsK3r1JZGQElo+Kglwxcypk1jzx0tv1r8fVjOIRfXwKMtE0cgoJ3gmXv4+z6t8yLbASocZyaERyRoWvr4cm3P2lN7qZgqNqmPpJOs+XE399GXVdFM_XtGGQU1OcSxi1GVp0kRnOtq3wkTcOag+4880Rhf61Q-Mab81qdnnVBFxF1LtOlrgxlaqvnI5Xis+e2SnCkOjoqZiiDRhjSDVv0xzWjJ28vntfo933yWSKx4&ui_locales=en-US",
+  "chain": [
+    {
+      "url": "https://login.nvidia.com/authorize?response_type=code&device_id=gfnclient&scope=openid+consent+email+tk_client+age&client_id=ZU7sPN-miLujMD95LfOQ453IB0AtjM8sMyvgJ9wCXEQ&redirect_uri=http%3A%2F%2Flocalhost%3A2259&ui_locales=en-US&nonce=X&prompt=select_account&code_challenge=X&code_challenge_method=S256",
+      "status": 302,
+      "location": "https://static-login.nvidia.com/service/gfn/index.html?state=eKJlBtYMyELPUQfSE3r-rG2dbx05PJ_BNmOSq_gPrW5yJWh0WeynEC1VxjUFOee7-uHEcKx-IoW4-KUG7a85Wg&redirect_uri=https%3A%2F%2Flogin.nvidia.com%2Fcallback%2Fprovider&idp_ids=PDiAhv2kJTFeQ7WOPqiQ2tRZ7lGhR2X11dXvM4TZSxg+IsvVBA3Aj8KZ7gwwuRUhB6-tOF2o2F1wncD-XjYv100+Q0g4IWPZrHIiXS2nh3I5fg59Aq09xhtd5xjd19nhJJM+pC8KYgDzm2TMgkPO1YlOSj8PjhT57JIbdlwDfFZNZFA+HVmQH98-CMT7FBuj_X3_QPmEYhJ-zzvFvM3mwmWwczw+SBcX86bSGvOo6kgTpV_dRtqSs_3uU0hsK3r1JZGQElo+Kglwxcypk1jzx0tv1r8fVjOIRfXwKMtE0cgoJ3gmXv4+z6t8yLbASocZyaERyRoWvr4cm3P2lN7qZgqNqmPpJOs+XE399GXVdFM_XtGGQU1OcSxi1GVp0kRnOtq3wkTcOag+4880Rhf61Q-Mab81qdnnVBFxF1LtOlrgxlaqvnI5Xis+e2SnCkOjoqZiiDRhjSDVv0xzWjJ28vntfo933yWSKx4&ui_locales=en-US",
+      "content-type": null,
+      "cookie-names": []
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/index.html?state=eKJlBtYMyELPUQfSE3r-rG2dbx05PJ_BNmOSq_gPrW5yJWh0WeynEC1VxjUFOee7-uHEcKx-IoW4-KUG7a85Wg&redirect_uri=https%3A%2F%2Flogin.nvidia.com%2Fcallback%2Fprovider&idp_ids=PDiAhv2kJTFeQ7WOPqiQ2tRZ7lGhR2X11dXvM4TZSxg+IsvVBA3Aj8KZ7gwwuRUhB6-tOF2o2F1wncD-XjYv100+Q0g4IWPZrHIiXS2nh3I5fg59Aq09xhtd5xjd19nhJJM+pC8KYgDzm2TMgkPO1YlOSj8PjhT57JIbdlwDfFZNZFA+HVmQH98-CMT7FBuj_X3_QPmEYhJ-zzvFvM3mwmWwczw+SBcX86bSGvOo6kgTpV_dRtqSs_3uU0hsK3r1JZGQElo+Kglwxcypk1jzx0tv1r8fVjOIRfXwKMtE0cgoJ3gmXv4+z6t8yLbASocZyaERyRoWvr4cm3P2lN7qZgqNqmPpJOs+XE399GXVdFM_XtGGQU1OcSxi1GVp0kRnOtq3wkTcOag+4880Rhf61Q-Mab81qdnnVBFxF1LtOlrgxlaqvnI5Xis+e2SnCkOjoqZiiDRhjSDVv0xzWjJ28vntfo933yWSKx4&ui_locales=en-US",
+      "status": 200,
+      "location": null,
+      "content-type": "text/html",
+      "cookie-names": []
+    }
+  ],
+  "files": [
+    {
+      "url": "https://login.nvidia.com/authorize?response_type=code&device_id=gfnclient&scope=openid+consent+email+tk_client+age&client_id=ZU7sPN-miLujMD95LfOQ453IB0AtjM8sMyvgJ9wCXEQ&redirect_uri=http%3A%2F%2Flocalhost%3A2259&ui_locales=en-US&nonce=602fd75412a8ca449436831bc3fca31b&prompt=select_account&code_challenge=AyFbrxEmVqfOXKjYdmQwy6fblF3ohK_GkSddtJ2y9tI&code_challenge_method=S256",
+      "type": "",
+      "bytes": 0
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/index.html?state=eKJlBtYMyELPUQfSE3r-rG2dbx05PJ_BNmOSq_gPrW5yJWh0WeynEC1VxjUFOee7-uHEcKx-IoW4-KUG7a85Wg&redirect_uri=https%3A%2F%2Flogin.nvidia.com%2Fcallback%2Fprovider&idp_ids=PDiAhv2kJTFeQ7WOPqiQ2tRZ7lGhR2X11dXvM4TZSxg+IsvVBA3Aj8KZ7gwwuRUhB6-tOF2o2F1wncD-XjYv100+Q0g4IWPZrHIiXS2nh3I5fg59Aq09xhtd5xjd19nhJJM+pC8KYgDzm2TMgkPO1YlOSj8PjhT57JIbdlwDfFZNZFA+HVmQH98-CMT7FBuj_X3_QPmEYhJ-zzvFvM3mwmWwczw+SBcX86bSGvOo6kgTpV_dRtqSs_3uU0hsK3r1JZGQElo+Kglwxcypk1jzx0tv1r8fVjOIRfXwKMtE0cgoJ3gmXv4+z6t8yLbASocZyaERyRoWvr4cm3P2lN7qZgqNqmPpJOs+XE399GXVdFM_XtGGQU1OcSxi1GVp0kRnOtq3wkTcOag+4880Rhf61Q-Mab81qdnnVBFxF1LtOlrgxlaqvnI5Xis+e2SnCkOjoqZiiDRhjSDVv0xzWjJ28vntfo933yWSKx4&ui_locales=en-US",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/index-KsW7_jix.js",
+      "type": "text/javascript",
+      "bytes": 388848
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/index-DwnfkkVp.css",
+      "type": "text/css",
+      "bytes": 3801
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/assets/QRCode-CwxRnE46.js",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/assets/QRCode-LU81S3Fk.css",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/assets/UserConsents-CtgSEIuW.js",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/assets/UserConsents-BQAf7F4r.css",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/assets/ProviderSelector-DTSdjJjh.js",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/assets/ProviderSelector-rSzku0Dh.css",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/assets/DeviceConfirmation-BcGUqdXc.js",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/assets/DeviceConfirmation-CHjg12r5.css",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/assets/UserCodeSubmission-DMf_AARA.js",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/assets/UserCodeSubmission-CMxDnIXe.css",
+      "type": "text/html",
+      "bytes": 556
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/ar-SA.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/ar-SA-BQ0eSeRy.js",
+      "type": "text/javascript",
+      "bytes": 16740
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/bg-BG.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/bg-BG-XnJlHLY7.js",
+      "type": "text/javascript",
+      "bytes": 18228
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/cs-CZ.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/cs-CZ-CeMDA91G.js",
+      "type": "text/javascript",
+      "bytes": 13726
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/da-DK.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/da-DK-D1mgIG5V.js",
+      "type": "text/javascript",
+      "bytes": 13124
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/de-DE.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/de-DE-B-QzgfSq.js",
+      "type": "text/javascript",
+      "bytes": 13933
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/default.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/el-GR.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/el-GR-COQ8hsQ7.js",
+      "type": "text/javascript",
+      "bytes": 19234
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/en-GB.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/en-GB-DtIxK5wN.js",
+      "type": "text/javascript",
+      "bytes": 13070
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/en-US.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/en-US-BLkSdlRA.js",
+      "type": "text/javascript",
+      "bytes": 13067
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/es-ES.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/es-ES-D08gcLXE.js",
+      "type": "text/javascript",
+      "bytes": 13705
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/es-MX.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/es-MX-DNzv-cbp.js",
+      "type": "text/javascript",
+      "bytes": 13705
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/fi-FI.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/fi-FI-CPUdmvlt.js",
+      "type": "text/javascript",
+      "bytes": 13375
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/fr-FR.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/fr-FR-DSOB_Qo1.js",
+      "type": "text/javascript",
+      "bytes": 13974
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/hu-HU.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/hu-HU-BGZQOiq_.js",
+      "type": "text/javascript",
+      "bytes": 14166
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/it-IT.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/it-IT-BK6m6HcD.js",
+      "type": "text/javascript",
+      "bytes": 13483
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/ja-JP.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/ja-JP-DN4a-BY2.js",
+      "type": "text/javascript",
+      "bytes": 16181
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/ko-KR.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/ko-KR-DpMcXcNf.js",
+      "type": "text/javascript",
+      "bytes": 14627
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/nb-NO.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/nb-NO-BW-BX_LL.js",
+      "type": "text/javascript",
+      "bytes": 13188
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/nl-NL.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/nl-NL-w85h5JwD.js",
+      "type": "text/javascript",
+      "bytes": 13495
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/pl-PL.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/pl-PL-gMZt-ikD.js",
+      "type": "text/javascript",
+      "bytes": 13602
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/pt-BR.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/pt-BR-C8tsB4IU.js",
+      "type": "text/javascript",
+      "bytes": 13506
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/pt-PT.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/pt-PT-vkpGPoYI.js",
+      "type": "text/javascript",
+      "bytes": 13511
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/ro-RO.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/ro-RO-DsYRqjFn.js",
+      "type": "text/javascript",
+      "bytes": 13763
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/ru-RU.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/ru-RU-z-Oiaf7Q.js",
+      "type": "text/javascript",
+      "bytes": 18452
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/sk-SK.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/sk-SK-C3mhJvNo.js",
+      "type": "text/javascript",
+      "bytes": 13758
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/sl-SI.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/sl-SI-DL5-6yL_.js",
+      "type": "text/javascript",
+      "bytes": 13200
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/sv-SE.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/sv-SE-CsSZtNxv.js",
+      "type": "text/javascript",
+      "bytes": 13297
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/th-TH.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/th-TH-Ctzmziny.js",
+      "type": "text/javascript",
+      "bytes": 22916
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/tr-TR.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/tr-TR-CDJUKNk1.js",
+      "type": "text/javascript",
+      "bytes": 13539
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/uk-UA.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/uk-UA-NlaVaiyH.js",
+      "type": "text/javascript",
+      "bytes": 18326
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/zh-CN.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/zh-CN-BM6AFU3O.js",
+      "type": "text/javascript",
+      "bytes": 13127
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/messages/zh-TW.json",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/zh-TW-BzCj0ENh.js",
+      "type": "text/javascript",
+      "bytes": 13166
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/QRCode-CwxRnE46.js",
+      "type": "text/javascript",
+      "bytes": 19033
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/LoginResult-CTTgVqUd.js",
+      "type": "text/javascript",
+      "bytes": 1285
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/StartLogout-BlTUyZ2l.js",
+      "type": "text/javascript",
+      "bytes": 626
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/LogoutResult-B0jJN5kA.js",
+      "type": "text/javascript",
+      "bytes": 2470
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/UserConsents-CtgSEIuW.js",
+      "type": "text/javascript",
+      "bytes": 5535
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/ProviderSelector-DTSdjJjh.js",
+      "type": "text/javascript",
+      "bytes": 29883
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/DeviceConfirmation-BcGUqdXc.js",
+      "type": "text/javascript",
+      "bytes": 1178
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/UserCodeSubmission-DMf_AARA.js",
+      "type": "text/javascript",
+      "bytes": 2908
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/index-DWjjtypy.js",
+      "type": "text/javascript",
+      "bytes": 385165
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/index-2ssN6foV.css",
+      "type": "text/css",
+      "bytes": 4087
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/twm-BDCCcPc3.png",
+      "type": "image/png",
+      "bytes": 8659
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/tkc-DOpEQMvH.png",
+      "type": "image/png",
+      "bytes": 4558
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/aby-ChZGBSaW.png",
+      "type": "image/png",
+      "bytes": 6793
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/gkr-kskDckzS.png",
+      "type": "image/png",
+      "bytes": 4301
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/nvidia-Dbe-Zjqe.png",
+      "type": "image/png",
+      "bytes": 5516
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/gfn/assets/dummy-COWiCxLS.png",
+      "type": "image/png",
+      "bytes": 22786
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/assets/EmailPicker-BQs8lJlI.js",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/assets/EmailPicker-CI9keWVT.css",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/assets/UserConsents-DmujuqFA.js",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/assets/UserConsents-Ci_M10Ir.css",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/assets/DeviceConfirmation-mPK9NQ7H.js",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/assets/DeviceConfirmation-DfpS0aIb.css",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/assets/UserCodeSubmission-BWuWVfge.js",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/assets/UserCodeSubmission-CK9wr7gX.css",
+      "type": "text/html",
+      "bytes": 559
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/ar-SA-BIRbvGSl.js",
+      "type": "text/javascript",
+      "bytes": 8227
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/bg-BG-B19BA2cg.js",
+      "type": "text/javascript",
+      "bytes": 9412
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/cs-CZ-VtsDtznH.js",
+      "type": "text/javascript",
+      "bytes": 6580
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/da-DK-BD0eVrIR.js",
+      "type": "text/javascript",
+      "bytes": 6163
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/de-DE-VCzjXLkq.js",
+      "type": "text/javascript",
+      "bytes": 6823
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/el-GR-C_1NuwrE.js",
+      "type": "text/javascript",
+      "bytes": 10308
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/en-GB-Ba2YrIr4.js",
+      "type": "text/javascript",
+      "bytes": 6010
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/en-US-dZn3Wa-s.js",
+      "type": "text/javascript",
+      "bytes": 5984
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/es-ES-BrjGRhwk.js",
+      "type": "text/javascript",
+      "bytes": 6851
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/es-MX-B7cXUUZu.js",
+      "type": "text/javascript",
+      "bytes": 6849
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/fi-FI-D2FlcHOX.js",
+      "type": "text/javascript",
+      "bytes": 6399
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/fr-FR-B6pLyxe1.js",
+      "type": "text/javascript",
+      "bytes": 6943
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/hu-HU-C8y-I-TD.js",
+      "type": "text/javascript",
+      "bytes": 6941
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/it-IT-DBammHQ4.js",
+      "type": "text/javascript",
+      "bytes": 6535
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/ja-JP-pBm_BcO5.js",
+      "type": "text/javascript",
+      "bytes": 7661
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/ko-KR-DytKnCb1.js",
+      "type": "text/javascript",
+      "bytes": 6741
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/nb-NO-7UO1m5y8.js",
+      "type": "text/javascript",
+      "bytes": 6223
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/nl-NL-DcOCNAbn.js",
+      "type": "text/javascript",
+      "bytes": 6358
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/pl-PL-cPhvM8BY.js",
+      "type": "text/javascript",
+      "bytes": 6628
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/pt-BR-Bw7HDAFw.js",
+      "type": "text/javascript",
+      "bytes": 6514
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/pt-PT-BihU1puh.js",
+      "type": "text/javascript",
+      "bytes": 6517
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/ro-RO-BxZwcpWK.js",
+      "type": "text/javascript",
+      "bytes": 6920
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/ru-RU-mRfPJTep.js",
+      "type": "text/javascript",
+      "bytes": 9736
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/sk-SK-DyCzlHm9.js",
+      "type": "text/javascript",
+      "bytes": 6629
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/sl-SI-C0idvwcE.js",
+      "type": "text/javascript",
+      "bytes": 6144
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/sv-SE-BHNOaT_K.js",
+      "type": "text/javascript",
+      "bytes": 6268
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/th-TH-C1c4D771.js",
+      "type": "text/javascript",
+      "bytes": 11416
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/tr-TR-iD_WYCw_.js",
+      "type": "text/javascript",
+      "bytes": 6467
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/uk-UA-C3Zdxjc0.js",
+      "type": "text/javascript",
+      "bytes": 9515
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/zh-CN-DSI18Ef0.js",
+      "type": "text/javascript",
+      "bytes": 5634
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/zh-TW-CRY7L2iG.js",
+      "type": "text/javascript",
+      "bytes": 5697
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/EmailPicker-BQs8lJlI.js",
+      "type": "text/javascript",
+      "bytes": 4555
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/LoginResult-Cwcca3AD.js",
+      "type": "text/javascript",
+      "bytes": 1692
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/LogoutStart-CQGi4Nhm.js",
+      "type": "text/javascript",
+      "bytes": 684
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/LogoutResult-DT6kiZAI.js",
+      "type": "text/javascript",
+      "bytes": 1447
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/UserConsents-DmujuqFA.js",
+      "type": "text/javascript",
+      "bytes": 5837
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/DeviceConfirmation-mPK9NQ7H.js",
+      "type": "text/javascript",
+      "bytes": 1375
+    },
+    {
+      "url": "https://static-login.nvidia.com/service/default/assets/UserCodeSubmission-BWuWVfge.js",
+      "type": "text/javascript",
+      "bytes": 2988
+    }
+  ],
+  "api_candidates": [
+    "/service/default",
+    "/service/default/",
+    "/service/default/assets/index-2ssN6foV.css",
+    "/service/default/assets/index-DWjjtypy.js",
+    "/service/gfn",
+    "/service/gfn/",
+    "/service/gfn/assets/aby-ChZGBSaW.png",
+    "/service/gfn/assets/dummy-COWiCxLS.png",
+    "/service/gfn/assets/gkr-kskDckzS.png",
+    "/service/gfn/assets/index-DwnfkkVp.css",
+    "/service/gfn/assets/index-KsW7_jix.js",
+    "/service/gfn/assets/nvidia-Dbe-Zjqe.png",
+    "/service/gfn/assets/tkc-DOpEQMvH.png",
+    "/service/gfn/assets/twm-BDCCcPc3.png"
+  ]
+}
