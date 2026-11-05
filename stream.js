@@ -105,7 +105,8 @@ export async function startStream(o) {
   const hdr = (extra) => ({ ...headers(), "x-device-id": deviceId, "Content-Type": "application/json", ...(extra || {}) });
   const call = async (method, path, body) => {
     let lastErr;
-    for (const b of base ? [base] : [`https://${String(vpcId).toLowerCase()}.cloudmatchbeta.nvidiagrid.net`, PROD_HOST]) {
+    const zoneHost = `https://${String(vpcId).toLowerCase()}.cloudmatchbeta.nvidiagrid.net`;
+    for (const b of base ? [base] : o.strict ? [zoneHost] : [zoneHost, PROD_HOST]) {
       try {
         const r = await http(b + path, { method, headers: hdr(), body: body ? JSON.stringify(body) : undefined, follow: false });
         let j = {};
