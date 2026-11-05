@@ -1,0 +1,894 @@
+{
+  "origin": "https://play.geforcenow.com",
+  "start": "https://play.geforcenow.com",
+  "files": [
+    {
+      "url": "https://play.geforcenow.com",
+      "file": "ref/mall/index.html",
+      "type": "text/html",
+      "bytes": 70552
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/manifest.webmanifest",
+      "file": "ref/mall/manifest.webmanifest",
+      "type": "application/manifest+json",
+      "bytes": 2658
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/spotlight-bg.webp",
+      "file": "ref/mall/assets/img/spotlight-bg.webp",
+      "type": "binary/octet-stream",
+      "bytes": 9782
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/GFN_logo1024_v2.png",
+      "file": "ref/mall/assets/img/GFN_logo1024_v2.png",
+      "type": "image/png",
+      "bytes": 8084
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-120.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-120.webp",
+      "type": "binary/octet-stream",
+      "bytes": 3250
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-152.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-152.webp",
+      "type": "binary/octet-stream",
+      "bytes": 4022
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-167.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-167.webp",
+      "type": "binary/octet-stream",
+      "bytes": 4298
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-180.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-180.webp",
+      "type": "binary/octet-stream",
+      "bytes": 4610
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad129Pro_landscape_v4.webp",
+      "file": "ref/mall/assets/img/splash_iPad129Pro_landscape_v4.webp",
+      "type": "binary/octet-stream",
+      "bytes": 8144
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad129Pro_portrait_v4.webp",
+      "file": "ref/mall/assets/img/splash_iPad129Pro_portrait_v4.webp",
+      "type": "binary/octet-stream",
+      "bytes": 7784
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad110Pro_landscape_v4.webp",
+      "file": "ref/mall/assets/img/splash_iPad110Pro_landscape_v4.webp",
+      "type": "binary/octet-stream",
+      "bytes": 8204
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad110Pro_portrait_v4.webp",
+      "file": "ref/mall/assets/img/splash_iPad110Pro_portrait_v4.webp",
+      "type": "binary/octet-stream",
+      "bytes": 7904
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad105Air_landscape_v4.webp",
+      "file": "ref/mall/assets/img/splash_iPad105Air_landscape_v4.webp",
+      "type": "binary/octet-stream",
+      "bytes": 7548
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad105Air_portrait_v4.webp",
+      "file": "ref/mall/assets/img/splash_iPad105Air_portrait_v4.webp",
+      "type": "binary/octet-stream",
+      "bytes": 7738
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad109Air_landscape_v5.webp",
+      "file": "ref/mall/assets/img/splash_iPad109Air_landscape_v5.webp",
+      "type": "binary/octet-stream",
+      "bytes": 7804
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad109Air_portrait_v5.webp",
+      "file": "ref/mall/assets/img/splash_iPad109Air_portrait_v5.webp",
+      "type": "binary/octet-stream",
+      "bytes": 7842
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad102_landscape_v4.webp",
+      "file": "ref/mall/assets/img/splash_iPad102_landscape_v4.webp",
+      "type": "binary/octet-stream",
+      "bytes": 8134
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad102_portrait_v4.webp",
+      "file": "ref/mall/assets/img/splash_iPad102_portrait_v4.webp",
+      "type": "binary/octet-stream",
+      "bytes": 7936
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad097Pro_landscape_v4.webp",
+      "file": "ref/mall/assets/img/splash_iPad097Pro_landscape_v4.webp",
+      "type": "binary/octet-stream",
+      "bytes": 6704
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPad097Pro_portrait_v4.webp",
+      "file": "ref/mall/assets/img/splash_iPad097Pro_portrait_v4.webp",
+      "type": "binary/octet-stream",
+      "bytes": 7128
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPhone12ProMax_v3.webp",
+      "file": "ref/mall/assets/img/splash_iPhone12ProMax_v3.webp",
+      "type": "binary/octet-stream",
+      "bytes": 21996
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPhone12Pro_v3.webp",
+      "file": "ref/mall/assets/img/splash_iPhone12Pro_v3.webp",
+      "type": "binary/octet-stream",
+      "bytes": 16634
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPhone12Mini_v3.webp",
+      "file": "ref/mall/assets/img/splash_iPhone12Mini_v3.webp",
+      "type": "binary/octet-stream",
+      "bytes": 17776
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPhone11ProMax_v3.webp",
+      "file": "ref/mall/assets/img/splash_iPhone11ProMax_v3.webp",
+      "type": "binary/octet-stream",
+      "bytes": 15662
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPhone11_v3.webp",
+      "file": "ref/mall/assets/img/splash_iPhone11_v3.webp",
+      "type": "binary/octet-stream",
+      "bytes": 10370
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPhone8Plus_v3.webp",
+      "file": "ref/mall/assets/img/splash_iPhone8Plus_v3.webp",
+      "type": "binary/octet-stream",
+      "bytes": 15252
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPhone8_v3.webp",
+      "file": "ref/mall/assets/img/splash_iPhone8_v3.webp",
+      "type": "binary/octet-stream",
+      "bytes": 10514
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash_iPhoneSEOld_v3.webp",
+      "file": "ref/mall/assets/img/splash_iPhoneSEOld_v3.webp",
+      "type": "binary/octet-stream",
+      "bytes": 8700
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/",
+      "file": "ref/mall/index.html",
+      "type": "text/html",
+      "bytes": 70552
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/styles.730843c9201758bb.css",
+      "file": "ref/mall/styles.730843c9201758bb.css",
+      "type": "text/css",
+      "bytes": 369978
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/splash-gfn-logo-v3.svg",
+      "file": "ref/mall/assets/img/splash-gfn-logo-v3.svg",
+      "type": "image/svg+xml",
+      "bytes": 5553
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/handle-gdn-util.js",
+      "file": "ref/mall/handle-gdn-util.js",
+      "type": "text/javascript",
+      "bytes": 638
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/runtime.e351e120ca076543.js",
+      "file": "ref/mall/runtime.e351e120ca076543.js",
+      "type": "text/javascript",
+      "bytes": 6180
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/polyfills.34a4d9a329f3dcec.js",
+      "file": "ref/mall/polyfills.34a4d9a329f3dcec.js",
+      "type": "text/javascript",
+      "bytes": 66763
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/vendor.f74801560d6f59e0.js",
+      "file": "ref/mall/vendor.f74801560d6f59e0.js",
+      "type": "text/javascript",
+      "bytes": 3530498
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/main.0905e658be5f9a9c.js",
+      "file": "ref/mall/main.0905e658be5f9a9c.js",
+      "type": "text/javascript",
+      "bytes": 4072031
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/NVIDIASans_W_Rg.33fb51adcc625f4e.woff2",
+      "file": "ref/mall/assets/hashed/NVIDIASans_W_Rg.33fb51adcc625f4e.woff2",
+      "type": "font/woff2",
+      "bytes": 29124
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/NVIDIASans_W_Md.14ea224b997bf6e0.woff2",
+      "file": "ref/mall/assets/hashed/NVIDIASans_W_Md.14ea224b997bf6e0.woff2",
+      "type": "font/woff2",
+      "bytes": 29528
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/NVIDIASans_W_Bd.5aafff8b08f9a971.woff2",
+      "file": "ref/mall/assets/hashed/NVIDIASans_W_Bd.5aafff8b08f9a971.woff2",
+      "type": "font/woff2",
+      "bytes": 28564
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/gfn-service-worker.js",
+      "file": "ref/mall/gfn-service-worker.js",
+      "type": "text/javascript",
+      "bytes": 254036
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-72.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-72.webp",
+      "type": "binary/octet-stream",
+      "bytes": 2040
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-96.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-96.webp",
+      "type": "binary/octet-stream",
+      "bytes": 2682
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-128.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-128.webp",
+      "type": "binary/octet-stream",
+      "bytes": 3520
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-144.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-144.webp",
+      "type": "binary/octet-stream",
+      "bytes": 3868
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-192.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-192.webp",
+      "type": "binary/octet-stream",
+      "bytes": 4936
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-384.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-384.webp",
+      "type": "binary/octet-stream",
+      "bytes": 9344
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/GFN-Logo-512.webp",
+      "file": "ref/mall/assets/icons/GFN-Logo-512.webp",
+      "type": "binary/octet-stream",
+      "bytes": 12090
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/maskable/GFN-Logo-72.webp",
+      "file": "ref/mall/assets/icons/maskable/GFN-Logo-72.webp",
+      "type": "binary/octet-stream",
+      "bytes": 702
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/maskable/GFN-Logo-96.webp",
+      "file": "ref/mall/assets/icons/maskable/GFN-Logo-96.webp",
+      "type": "binary/octet-stream",
+      "bytes": 896
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/maskable/GFN-Logo-128.webp",
+      "file": "ref/mall/assets/icons/maskable/GFN-Logo-128.webp",
+      "type": "binary/octet-stream",
+      "bytes": 1112
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/maskable/GFN-Logo-144.webp",
+      "file": "ref/mall/assets/icons/maskable/GFN-Logo-144.webp",
+      "type": "binary/octet-stream",
+      "bytes": 1226
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/maskable/GFN-Logo-152.webp",
+      "file": "ref/mall/assets/icons/maskable/GFN-Logo-152.webp",
+      "type": "binary/octet-stream",
+      "bytes": 1312
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/maskable/GFN-Logo-192.webp",
+      "file": "ref/mall/assets/icons/maskable/GFN-Logo-192.webp",
+      "type": "binary/octet-stream",
+      "bytes": 1560
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/maskable/GFN-Logo-384.webp",
+      "file": "ref/mall/assets/icons/maskable/GFN-Logo-384.webp",
+      "type": "binary/octet-stream",
+      "bytes": 2946
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/icons/maskable/GFN-Logo-512.webp",
+      "file": "ref/mall/assets/icons/maskable/GFN-Logo-512.webp",
+      "type": "binary/octet-stream",
+      "bytes": 3410
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/DefaultStreamerBackgroundArt.a079e7d7fdd1ed01.jpg",
+      "file": "ref/mall/assets/hashed/DefaultStreamerBackgroundArt.a079e7d7fdd1ed01.jpg",
+      "type": "image/jpeg",
+      "bytes": 958245
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/MaterialIcons-Regular.1e50f5c2ffa6aba4.eot",
+      "file": "ref/mall/assets/hashed/MaterialIcons-Regular.1e50f5c2ffa6aba4.eot",
+      "type": "application/vnd.ms-fontobject",
+      "bytes": 143258
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/MaterialIcons-Regular.7ea2023eeca07427.woff2",
+      "file": "ref/mall/assets/hashed/MaterialIcons-Regular.7ea2023eeca07427.woff2",
+      "type": "font/woff2",
+      "bytes": 44300
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/MaterialIcons-Regular.db852539204b1a34.woff",
+      "file": "ref/mall/assets/hashed/MaterialIcons-Regular.db852539204b1a34.woff",
+      "type": "font/woff",
+      "bytes": 57620
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/MaterialIcons-Regular.196fa4a92dd6fa73.ttf",
+      "file": "ref/mall/assets/hashed/MaterialIcons-Regular.196fa4a92dd6fa73.ttf",
+      "type": "font/ttf",
+      "bytes": 128180
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/nv-custom-icons.925c45bccfdcf582.woff2",
+      "file": "ref/mall/assets/hashed/nv-custom-icons.925c45bccfdcf582.woff2",
+      "type": "font/woff2",
+      "bytes": 9052
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/Marquee_Hero_Image_Gradient.97da07cc527f6200.svg",
+      "file": "ref/mall/assets/hashed/Marquee_Hero_Image_Gradient.97da07cc527f6200.svg",
+      "type": "image/svg+xml",
+      "bytes": 70329
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/Marquee_Hero_Image_Gradient_RTL.8f28b6a06d45d190.svg",
+      "file": "ref/mall/assets/hashed/Marquee_Hero_Image_Gradient_RTL.8f28b6a06d45d190.svg",
+      "type": "image/svg+xml",
+      "bytes": 70333
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/mobile_marquee_hero_mask_ltr.847d01c9a13bfbfb.webp",
+      "file": "ref/mall/assets/hashed/mobile_marquee_hero_mask_ltr.847d01c9a13bfbfb.webp",
+      "type": "binary/octet-stream",
+      "bytes": 44224
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/mobile_marquee_hero_mask_rtl.11d53446b93cdd22.webp",
+      "file": "ref/mall/assets/hashed/mobile_marquee_hero_mask_rtl.11d53446b93cdd22.webp",
+      "type": "binary/octet-stream",
+      "bytes": 43488
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/shared/assets/img/LoginWallContentBackground.webp",
+      "file": "ref/mall/shared/assets/img/LoginWallContentBackground.webp",
+      "type": "binary/octet-stream",
+      "bytes": 454956
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/nv-gfn-logo_v3.svg",
+      "file": "ref/mall/assets/img/nv-gfn-logo_v3.svg",
+      "type": "image/svg+xml",
+      "bytes": 7736
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/transparent.png",
+      "file": "ref/mall/assets/img/transparent.png",
+      "type": "image/png",
+      "bytes": 119
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/Marquee_Hero_Image_Fallback.webp",
+      "file": "ref/mall/assets/img/Marquee_Hero_Image_Fallback.webp",
+      "type": "binary/octet-stream",
+      "bytes": 220418
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/DefaultGameArt.svg",
+      "file": "ref/mall/assets/img/DefaultGameArt.svg",
+      "type": "image/svg+xml",
+      "bytes": 16236
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/DefaultGameArt-BoxArt.svg",
+      "file": "ref/mall/assets/img/DefaultGameArt-BoxArt.svg",
+      "type": "image/svg+xml",
+      "bytes": 16435
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/shared/assets/config/config.json",
+      "file": "ref/mall/shared/assets/config/config.json",
+      "type": "application/json",
+      "bytes": 46352
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/avatar_generic_118.svg",
+      "file": "ref/mall/assets/img/avatar_generic_118.svg",
+      "type": "image/svg+xml",
+      "bytes": 2426
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/Logo_GFN_Lockup.svg",
+      "file": "ref/mall/assets/img/Logo_GFN_Lockup.svg",
+      "type": "image/svg+xml",
+      "bytes": 12593
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/shared/assets/img/DefaultStreamerBackgroundArt.jpg",
+      "file": "ref/mall/shared/assets/img/DefaultStreamerBackgroundArt.jpg",
+      "type": "image/jpeg",
+      "bytes": 958245
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/shared/assets/img/GFNUpSellBannerKV_v3.webp",
+      "file": "ref/mall/shared/assets/img/GFNUpSellBannerKV_v3.webp",
+      "type": "binary/octet-stream",
+      "bytes": 55540
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/rt_arrow.svg",
+      "file": "ref/mall/assets/img/rt_arrow.svg",
+      "type": "image/svg+xml",
+      "bytes": 343
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/shared/assets/img/DefaultGameArt-TVBanner.svg",
+      "file": "ref/mall/shared/assets/img/DefaultGameArt-TVBanner.svg",
+      "type": "image/svg+xml",
+      "bytes": 16236
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/LoginWallFallbackTile.webp",
+      "file": "ref/mall/assets/img/LoginWallFallbackTile.webp",
+      "type": "binary/octet-stream",
+      "bytes": 232
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/avatar_generic_118.png",
+      "file": "ref/mall/assets/img/avatar_generic_118.png",
+      "type": "image/png",
+      "bytes": 3195
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/nvidia_logo_v2.webp",
+      "file": "ref/mall/assets/img/nvidia_logo_v2.webp",
+      "type": "binary/octet-stream",
+      "bytes": 1688
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/mobile_marquee_hero_mask_rtl.webp",
+      "file": "ref/mall/assets/img/mobile_marquee_hero_mask_rtl.webp",
+      "type": "binary/octet-stream",
+      "bytes": 43488
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/mobile_marquee_hero_mask_ltr.webp",
+      "file": "ref/mall/assets/img/mobile_marquee_hero_mask_ltr.webp",
+      "type": "binary/octet-stream",
+      "bytes": 44224
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/connectionscard.webp",
+      "file": "ref/mall/assets/img/connectionscard.webp",
+      "type": "binary/octet-stream",
+      "bytes": 375174
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/avatar_generic_118.webp",
+      "file": "ref/mall/assets/img/avatar_generic_118.webp",
+      "type": "binary/octet-stream",
+      "bytes": 1230
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/Marquee.webp",
+      "file": "ref/mall/assets/img/Marquee.webp",
+      "type": "binary/octet-stream",
+      "bytes": 3662
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/DefaultFilterTileBoxArt_v2.webp",
+      "file": "ref/mall/assets/img/DefaultFilterTileBoxArt_v2.webp",
+      "type": "binary/octet-stream",
+      "bytes": 1030
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/hex_bg.cc7ed9143bc0c5ae.webp",
+      "file": "ref/mall/assets/hashed/hex_bg.cc7ed9143bc0c5ae.webp",
+      "type": "binary/octet-stream",
+      "bytes": 1298
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/shared/assets/img/DefaultGameArt-TVBanner-nonGame.svg",
+      "file": "ref/mall/shared/assets/img/DefaultGameArt-TVBanner-nonGame.svg",
+      "type": "image/svg+xml",
+      "bytes": 17980
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/timer_marquee_right.svg",
+      "file": "ref/mall/assets/img/timer_marquee_right.svg",
+      "type": "image/svg+xml",
+      "bytes": 504
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/timer_marquee_middle.svg",
+      "file": "ref/mall/assets/img/timer_marquee_middle.svg",
+      "type": "image/svg+xml",
+      "bytes": 456
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/timer_marquee_left.svg",
+      "file": "ref/mall/assets/img/timer_marquee_left.svg",
+      "type": "image/svg+xml",
+      "bytes": 447
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/rt_arrow_glass.svg",
+      "file": "ref/mall/assets/img/rt_arrow_glass.svg",
+      "type": "image/svg+xml",
+      "bytes": 297
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/nvapp-logo.svg",
+      "file": "ref/mall/assets/img/nvapp-logo.svg",
+      "type": "image/svg+xml",
+      "bytes": 3641
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/lt_arrow_glass.svg",
+      "file": "ref/mall/assets/img/lt_arrow_glass.svg",
+      "type": "image/svg+xml",
+      "bytes": 303
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/lt_arrow.svg",
+      "file": "ref/mall/assets/img/lt_arrow.svg",
+      "type": "image/svg+xml",
+      "bytes": 381
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/installation-billboard-fallback.svg",
+      "file": "ref/mall/assets/img/installation-billboard-fallback.svg",
+      "type": "image/svg+xml",
+      "bytes": 33509
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/img_gfn_branding.svg",
+      "file": "ref/mall/assets/img/img_gfn_branding.svg",
+      "type": "image/svg+xml",
+      "bytes": 4922
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/img_gfe_branding.svg",
+      "file": "ref/mall/assets/img/img_gfe_branding.svg",
+      "type": "image/svg+xml",
+      "bytes": 4969
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/hex_bg.svg",
+      "file": "ref/mall/assets/img/hex_bg.svg",
+      "type": "image/svg+xml",
+      "bytes": 599
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/genrecard-yellow.svg",
+      "file": "ref/mall/assets/img/genrecard-yellow.svg",
+      "type": "image/svg+xml",
+      "bytes": 2619
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/genrecard-teal.svg",
+      "file": "ref/mall/assets/img/genrecard-teal.svg",
+      "type": "image/svg+xml",
+      "bytes": 2619
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/genrecard-red.svg",
+      "file": "ref/mall/assets/img/genrecard-red.svg",
+      "type": "image/svg+xml",
+      "bytes": 2619
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/genrecard-purple.svg",
+      "file": "ref/mall/assets/img/genrecard-purple.svg",
+      "type": "image/svg+xml",
+      "bytes": 2619
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/genrecard-green.svg",
+      "file": "ref/mall/assets/img/genrecard-green.svg",
+      "type": "image/svg+xml",
+      "bytes": 2619
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/genrecard-fuchia.svg",
+      "file": "ref/mall/assets/img/genrecard-fuchia.svg",
+      "type": "image/svg+xml",
+      "bytes": 2619
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/genrecard-blue.svg",
+      "file": "ref/mall/assets/img/genrecard-blue.svg",
+      "type": "image/svg+xml",
+      "bytes": 2619
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/geforce_mark.svg",
+      "file": "ref/mall/assets/img/geforce_mark.svg",
+      "type": "image/svg+xml",
+      "bytes": 159
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/RTX_ENABLED_Locked_v2.svg",
+      "file": "ref/mall/assets/img/RTX_ENABLED_Locked_v2.svg",
+      "type": "image/svg+xml",
+      "bytes": 1615
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/RTX_ENABLED_Available_v2.svg",
+      "file": "ref/mall/assets/img/RTX_ENABLED_Available_v2.svg",
+      "type": "image/svg+xml",
+      "bytes": 1353
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/Marquee_Hero_Image_Gradient_RTL.svg",
+      "file": "ref/mall/assets/img/Marquee_Hero_Image_Gradient_RTL.svg",
+      "type": "image/svg+xml",
+      "bytes": 70333
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/Marquee_Hero_Image_Gradient.svg",
+      "file": "ref/mall/assets/img/Marquee_Hero_Image_Gradient.svg",
+      "type": "image/svg+xml",
+      "bytes": 70329
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/HDR_ENABLED_Locked_v2.svg",
+      "file": "ref/mall/assets/img/HDR_ENABLED_Locked_v2.svg",
+      "type": "image/svg+xml",
+      "bytes": 1944
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/HDR_ENABLED_Info_v2.svg",
+      "file": "ref/mall/assets/img/HDR_ENABLED_Info_v2.svg",
+      "type": "image/svg+xml",
+      "bytes": 1739
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/HDR_ENABLED_Available_v2.svg",
+      "file": "ref/mall/assets/img/HDR_ENABLED_Available_v2.svg",
+      "type": "image/svg+xml",
+      "bytes": 1698
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/img/DefaultGameArt-nonGame.svg",
+      "file": "ref/mall/assets/img/DefaultGameArt-nonGame.svg",
+      "type": "image/svg+xml",
+      "bytes": 17980
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/timer_marquee_middle.5df23c8d5fbf8024.svg",
+      "file": "ref/mall/assets/hashed/timer_marquee_middle.5df23c8d5fbf8024.svg",
+      "type": "image/svg+xml",
+      "bytes": 456
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/Select_All_24.5528d1942c3b1881.svg",
+      "file": "ref/mall/assets/hashed/Select_All_24.5528d1942c3b1881.svg",
+      "type": "image/svg+xml",
+      "bytes": 878
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/Deselect_All_24.9c60743cf04d1b72.svg",
+      "file": "ref/mall/assets/hashed/Deselect_All_24.9c60743cf04d1b72.svg",
+      "type": "image/svg+xml",
+      "bytes": 919
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/assets/hashed/DefaultGameArt-TVBanner-nonGame.7a9b474a46206e4e.svg",
+      "file": "ref/mall/assets/hashed/DefaultGameArt-TVBanner-nonGame.7a9b474a46206e4e.svg",
+      "type": "image/svg+xml",
+      "bytes": 17980
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/marquee-image-metadata.682f670e77dbb878.js",
+      "file": "ref/mall/marquee-image-metadata.682f670e77dbb878.js",
+      "type": "text/javascript",
+      "bytes": 116084
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/common.86f087f34c589da8.js",
+      "file": "ref/mall/common.86f087f34c589da8.js",
+      "type": "text/javascript",
+      "bytes": 724
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/94.0a3509bc69047e65.js",
+      "file": "ref/mall/94.0a3509bc69047e65.js",
+      "type": "text/javascript",
+      "bytes": 2497
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/862.33feeb039962157c.js",
+      "file": "ref/mall/862.33feeb039962157c.js",
+      "type": "text/javascript",
+      "bytes": 20048
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/851.f4f9e99be5e5296c.js",
+      "file": "ref/mall/851.f4f9e99be5e5296c.js",
+      "type": "text/javascript",
+      "bytes": 16633
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/834.029dd7628a1929e6.js",
+      "file": "ref/mall/834.029dd7628a1929e6.js",
+      "type": "text/javascript",
+      "bytes": 58340
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/829.d6c2b8666c6bacba.js",
+      "file": "ref/mall/829.d6c2b8666c6bacba.js",
+      "type": "text/javascript",
+      "bytes": 857222
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/701.4acf2ebe91e4095b.js",
+      "file": "ref/mall/701.4acf2ebe91e4095b.js",
+      "type": "text/javascript",
+      "bytes": 2154
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/689.94695700d778332e.js",
+      "file": "ref/mall/689.94695700d778332e.js",
+      "type": "text/javascript",
+      "bytes": 345009
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/65.4475ab7e39af9e2b.js",
+      "file": "ref/mall/65.4475ab7e39af9e2b.js",
+      "type": "text/javascript",
+      "bytes": 40485
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/633.daaf70270b64e7ff.js",
+      "file": "ref/mall/633.daaf70270b64e7ff.js",
+      "type": "text/javascript",
+      "bytes": 123836
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/552.96b92f0e23c527c2.js",
+      "file": "ref/mall/552.96b92f0e23c527c2.js",
+      "type": "text/javascript",
+      "bytes": 2558
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/540.3be56005242bb901.js",
+      "file": "ref/mall/540.3be56005242bb901.js",
+      "type": "text/javascript",
+      "bytes": 68664
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/531.4e6cae6375c26b35.js",
+      "file": "ref/mall/531.4e6cae6375c26b35.js",
+      "type": "text/javascript",
+      "bytes": 241580
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/515.ed7a40cedac6c550.js",
+      "file": "ref/mall/515.ed7a40cedac6c550.js",
+      "type": "text/javascript",
+      "bytes": 1647
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/512.c1818968fcb5b0de.js",
+      "file": "ref/mall/512.c1818968fcb5b0de.js",
+      "type": "text/javascript",
+      "bytes": 4732
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/509.11f0a4480420f441.js",
+      "file": "ref/mall/509.11f0a4480420f441.js",
+      "type": "text/javascript",
+      "bytes": 10927
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/499.cf9296746176bdce.js",
+      "file": "ref/mall/499.cf9296746176bdce.js",
+      "type": "text/javascript",
+      "bytes": 17436
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/496.2527a1899ce6b297.js",
+      "file": "ref/mall/496.2527a1899ce6b297.js",
+      "type": "text/javascript",
+      "bytes": 655049
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/490.2779ebbe073c424e.js",
+      "file": "ref/mall/490.2779ebbe073c424e.js",
+      "type": "text/javascript",
+      "bytes": 34397
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/48.bb3d47333fce4c35.js",
+      "file": "ref/mall/48.bb3d47333fce4c35.js",
+      "type": "text/javascript",
+      "bytes": 151524
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/411.36bde545bf7a1d69.js",
+      "file": "ref/mall/411.36bde545bf7a1d69.js",
+      "type": "text/javascript",
+      "bytes": 12261
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/334.00f9ee0418faa3d8.js",
+      "file": "ref/mall/334.00f9ee0418faa3d8.js",
+      "type": "text/javascript",
+      "bytes": 38551
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/33.185674a2719e8a20.js",
+      "file": "ref/mall/33.185674a2719e8a20.js",
+      "type": "text/javascript",
+      "bytes": 2317797
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/25.f8951c15ada560cd.js",
+      "file": "ref/mall/25.f8951c15ada560cd.js",
+      "type": "text/javascript",
+      "bytes": 590556
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/165.23fe61539da7edd9.js",
+      "file": "ref/mall/165.23fe61539da7edd9.js",
+      "type": "text/javascript",
+      "bytes": 13281
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/154.8104ddb35c1295b7.js",
+      "file": "ref/mall/154.8104ddb35c1295b7.js",
+      "type": "text/javascript",
+      "bytes": 212227
+    },
+    {
+      "url": "https://play.geforcenow.com/mall/139.ef820ba45869fad0.js",
+      "file": "ref/mall/139.ef820ba45869fad0.js",
+      "type": "text/javascript",
+      "bytes": 175129
+    }
+  ]
+}
