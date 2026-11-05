@@ -8,7 +8,8 @@ OUT = os.path.join(ROOT, "ref", "login")
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
 CLIENT_ID = "ZU7sPN-miLujMD95LfOQ453IB0AtjM8sMyvgJ9wCXEQ"
 SCOPE = "openid consent email tk_client age"
-MAX_FILES = int(os.environ.get("MAX_FILES", "400"))
+MAX_FILES = int(os.environ.get("MAX_FILES", "800"))
+SKIP_EXT = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".ico", ".woff", ".woff2", ".ttf")
 HOSTS_SUFFIX = (".nvidia.com", ".nvgs.nvidia.com", ".nvidiagrid.net", ".geforcenow.com")
 
 jar = http.cookiejar.CookieJar()
@@ -143,6 +144,8 @@ def main():
             if f.startswith(("data:", "blob:", "javascript:", "mailto:", "#")):
                 continue
             nu = urllib.parse.urljoin(u, f)
+            if urllib.parse.urlparse(nu).path.lower().endswith(SKIP_EXT):
+                continue
             if urllib.parse.urlparse(nu).netloc.endswith(HOSTS_SUFFIX) and nu.split("#")[0] not in seen:
                 q2.append((nu, "", None))
     os.makedirs(OUT, exist_ok=True)
