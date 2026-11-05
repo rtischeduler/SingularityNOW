@@ -80,7 +80,7 @@ body.app{display:block;padding:0}body.app main{width:100%}
 @media (prefers-reduced-motion:reduce){.game,.hero-bg,.game.sk{animation:none}.game{transition:none}}
 #player{position:fixed;inset:0;z-index:100;background:#000;display:flex;align-items:center;justify-content:center}#player[hidden]{display:none}
 #pv{width:100%;height:100%;object-fit:contain;background:#000;outline:none}
-#pstatus{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:1.2rem;padding:24px;pointer-events:none;text-shadow:0 2px 12px #000;background:radial-gradient(500px 300px at 50% 50%,rgba(118,185,0,.18),transparent 70%)}#pstatus:empty{display:none}
+#pad{position:absolute;inset:0;z-index:5;background:#000;display:flex;align-items:center;justify-content:center}#pad[hidden]{display:none}#padv{width:100%;height:100%;object-fit:contain}#padinfo{position:absolute;top:14px;left:14px;background:rgba(0,0,0,.65);padding:6px 12px;border-radius:999px;font-size:.85rem;color:#e8eef3}#pstatus{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:1.2rem;padding:24px;pointer-events:none;text-shadow:0 2px 12px #000;background:radial-gradient(500px 300px at 50% 50%,rgba(118,185,0,.18),transparent 70%)}#pstatus:empty{display:none}
 .pbar{position:absolute;top:14px;right:14px;display:flex;gap:10px;opacity:.0;transition:opacity .2s}#player:hover .pbar,.pbar:focus-within{opacity:1}.pbar .btn{padding:9px 14px}
 #phint{position:absolute;bottom:14px;left:50%;translate:-50% 0;font-size:.8rem;color:#c3ccd4;background:rgba(0,0,0,.55);padding:5px 12px;border-radius:999px;pointer-events:none;opacity:0;transition:opacity .3s}#player:hover #phint{opacity:1}
 body.app details,#player~details{position:fixed;right:12px;bottom:12px;z-index:200;width:min(620px,94vw);background:rgba(11,13,16,.94);border:1px solid var(--line);border-radius:12px;padding:6px 10px}
@@ -158,11 +158,11 @@ select{width:100%;background:#0b0d10;border:1px solid var(--line);border-radius:
 <div id="settings" hidden><div class="panel"><h2>Settings</h2>
 <label>Resolution<select id="set-res"><option value="auto">Auto (screen size, up to 1080p)</option><option value="1280x720">1280 × 720</option><option value="1920x1080">1920 × 1080</option><option value="2560x1440">2560 × 1440</option><option value="3840x2160">3840 × 2160</option></select></label>
 <label>Frame rate<select id="set-fps"><option value="30">30 FPS</option><option value="60">60 FPS</option><option value="120">120 FPS</option></select></label>
-<label>Server<select id="set-zone"><option value="">Auto (nearest)</option></select></label>
+<label>Server<select id="set-zone"><option value="">Auto (shortest queue)</option></select></label>
 <div class="row"><input id="set-zone-custom" placeholder="Or type a zone ID, e.g. NP-AMS-08" autocomplete="off"><button class="btn ghost" id="set-refresh" type="button">Refresh queues</button></div>
 <small id="set-note">Lower queue number means a shorter wait. Some servers may not be available on your plan.</small>
 <div class="row"><button class="btn ghost" id="set-reset" type="button">Reset</button><button class="btn" id="set-save" type="button">Save</button></div></div></div>
-<div id="player" hidden><video id="pv" autoplay playsinline muted></video><div id="pstatus"></div><div class="pbar"><button class="btn ghost" id="pfs" type="button">Fullscreen</button><button class="btn" id="pstop" type="button">Exit game</button></div><div id="phint">Click the video to capture mouse and keyboard. Press Esc to release.</div></div>
+<div id="player" hidden><video id="pv" autoplay playsinline muted></video><div id="pad" hidden><video id="padv" playsinline></video><div id="padinfo">Ad</div></div><div id="pstatus"></div><div class="pbar"><button class="btn ghost" id="pfs" type="button">Fullscreen</button><button class="btn" id="pstop" type="button">Exit game</button></div><div id="phint">Click the video to capture mouse and keyboard. Press Esc to release.</div></div>
 <script type="module">
 const BAD_KEY = "WB_BAD";
 const BAD_TTL_MS = 6 * 3600000;
@@ -1119,7 +1119,7 @@ async function loadZones(force) {
     if (!rows.length) throw new Error("empty");
     rows.sort((a, b) => (a.q ?? 1e9) - (b.q ?? 1e9));
     sel.textContent = "";
-    sel.add(new Option("Auto (nearest)", ""));
+    sel.add(new Option("Auto (shortest queue)", ""));
     for (const x of rows) sel.add(new Option(x.id + (x.region ? " · " + x.region : "") + (x.q != null ? " · queue " + x.q : ""), x.id));
     zonesLoaded = true;
     note.textContent = rows.length + " servers. Lower queue number means a shorter wait. Some servers may not be available on your plan.";
@@ -1148,6 +1148,33 @@ $("set-save").addEventListener("click", () => {
 });
 $("settings").addEventListener("click", (e) => { if (e.target.id === "settings") $("settings").hidden = true; });
 
+let adStop = null;
+function playAd(ad, ev) {
+  const box = $("pad"), v = $("padv"), info = $("padinfo");
+  const files = (ad.adMediaFiles || []).filter((f) => f && f.mediaFileUrl);
+  const src = (files.find((f) => /\.mp4(\?|$)/i.test(f.mediaFileUrl)) || files[0] || {}).mediaFileUrl || ad.adUrl;
+  if (!src) return ev("error", { reason: "NO_AD_MEDIA" });
+  let started = false, ended = false;
+  const done = (name, d) => { if (ended) return; ended = true; v.pause(); v.removeAttribute("src"); v.load(); box.hidden = true; adStop = null; ev(name, d); };
+  adStop = () => done("error", { reason: "USER_CANCELED_WATCHING_ADS" });
+  box.hidden = false; $("pstatus").textContent = "";
+  v.onplaying = () => { if (!started) { started = true; ev("start"); } else ev("resume"); };
+  v.onpause = () => { if (started && !ended && !v.ended) ev("pause"); };
+  v.ontimeupdate = () => { info.textContent = "Ad · " + Math.max(0, Math.ceil((v.duration || ad.adLengthInSeconds || 0) - v.currentTime)) + "s — your game starts after this"; };
+  v.onended = () => done("finish");
+  v.onerror = () => done("error", { reason: "AD_PLAYBACK_ERROR" });
+  v.src = src; v.muted = false;
+  v.play().catch(() => { v.muted = true; v.play().catch(() => done("error", { reason: "AUTOPLAY_BLOCKED" })); });
+  setTimeout(() => { if (!started && !ended) done("error", { reason: "AD_LOAD_TIMEOUT" }); }, 20000);
+}
+async function rankedZones() {
+  try {
+    const r = await http(QUEUE_API, { headers: { Accept: "application/json" }, follow: true });
+    const j = JSON.parse(r.text), data = j.data || j;
+    return Object.entries(data).map(([id, v]) => { const o = v && typeof v === "object" ? v : {}; const q = Number(o.QueuePosition ?? o.queuePosition ?? o.queue ?? o.position); return { id, q: Number.isFinite(q) ? q : 1e9 }; })
+      .filter((x) => /^NP-[A-Za-z0-9-]+$/i.test(x.id)).sort((a, b) => a.q - b.q);
+  } catch { return []; }
+}
 let current = null;
 async function launch(g) {
   if (current) return;
@@ -1162,24 +1189,39 @@ async function launch(g) {
     if (!tokens.length) throw new Error("No GeForce NOW token available");
     const token = tokens[0];
     const cfg = loadSettings();
-    const vpcId = cfg.zone || await findVpc(session);
-    log("[stream] server", vpcId, cfg.zone ? "(chosen)" : "(auto)", "res", cfg.res, "fps", cfg.fps);
     let w, h;
     if (cfg.res === "auto") { const lo = Math.min(screen.width, screen.height) * (devicePixelRatio || 1), hi = Math.max(screen.width, screen.height) * (devicePixelRatio || 1); w = Math.min(1920, hi | 0) || 1920; h = Math.min(1080, lo | 0) || 1080; }
     else [w, h] = cfg.res.split("x").map(Number);
     const { startStream } = await import("./stream.js");
     const mk = (vpc, strict) => startStream({
       appId: g.vid || g.id, vpcId: vpc, strict, deviceId: JARVIS_DEVICE, video: pv, log, status: st,
+      playAd, stopAd: () => adStop && adStop(),
       headers: () => gfnHeaders(token), http, getLibcurl: async () => (await window.__getProxy({ log, say })).libcurl,
       width: w, height: h, fps: Number(cfg.fps) || 60,
     });
-    try { current = await mk(vpcId, !!cfg.zone); }
-    catch (err) {
-      if (!(cfg.zone && /error code (6|7|28|35|52|56)\b|timed out|unreachable/i.test(String((err && err.message) || err)))) throw err;
-      log("[stream] chosen server unreachable, using nearest");
-      st("That server isn’t reachable from here. Using your nearest one…");
-      current = await mk(await findVpc(session), false);
+    // candidate order: chosen server (retried), then lowest-queue servers, then nearest
+    const home = await findVpc(session);
+    const cands = [];
+    if (cfg.zone) cands.push({ id: cfg.zone, tries: 3 });
+    const ranked = await rankedZones();
+    for (const z of ranked.slice(0, 4)) if (!cands.some((c) => c.id === z.id)) cands.push({ id: z.id, tries: 1, q: z.q });
+    if (!cands.some((c) => c.id === home)) cands.push({ id: home, tries: 1 });
+    const bad = /error code (6|7|28|35|52|56)\b|timed out|unreachable|refused|INVALID_ZONE|ZONE|NOT_AVAILABLE|CAPACITY/i;
+    let lastErr;
+    outer: for (const c of cands) {
+      for (let t = 0; t < c.tries; t++) {
+        log("[stream] server", c.id, c.id === cfg.zone ? "(chosen, try " + (t + 1) + ")" : c.q != null ? "(auto, queue " + c.q + ")" : "(nearest)", "res", cfg.res, "fps", cfg.fps);
+        try { current = await mk(c.id, true); break outer; }
+        catch (err) {
+          lastErr = err;
+          if (!bad.test(String((err && err.message) || err))) throw err;
+          log("[stream]", c.id, "failed:", (err && err.message) || err);
+          st("Server " + c.id + " didn’t work, trying another…");
+          await new Promise((r) => setTimeout(r, 1500));
+        }
+      }
     }
+    if (!current) throw lastErr || new Error("No server reachable");
   } catch (e) {
     log("[stream] launch failed", e.message || e);
     st("Couldn’t start the game: " + (e.message || e) + (/code 60|certificate/i.test(String(e.message)) ? " — that server isn’t reachable here; pick an NP- server in Settings." : ""));

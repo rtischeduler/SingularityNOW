@@ -122,6 +122,7 @@ export async function startStream(o) {
   async function stop() {
     if (stopped) return;
     stopped = true;
+    try { o.stopAd && o.stopAd(); } catch {}
     cleanups.forEach((f) => { try { f(); } catch {} });
     try { ws && ws.close(); } catch {}
     try { pc && pc.close(); } catch {}
@@ -179,14 +180,40 @@ export async function startStream(o) {
 
     // 2. poll until ready
     let sess = c.json.session, lastSig = "", t0 = Date.now();
+    const adDone = new Set(); let adBusy = false;
+    // AdAction: 1 start, 2 pause, 3 resume, 4 finish, 5 cancel, 6 state change (from the web client bundle)
+    const adReport = async (adId, adAction, extra) => {
+      try {
+        const r = await call("PUT", "/v2/session/" + sessionId, { action: 6, adUpdates: [{ adId, adAction, clientTimestamp: Math.round(Date.now() / 1000), ...(extra || {}) }] });
+        log("[ads] report", adAction, r.status, r.text.slice(0, 160));
+      } catch (e) { log("[ads] report failed", e.message || e); }
+    };
+    const runAd = async (ad) => {
+      adDone.add(ad.adId);
+      let watched = 0, startedAt = 0;
+      await new Promise((resolve) => {
+        const ev = (name, d) => {
+          if (name === "start") { startedAt = Date.now(); adReport(ad.adId, 1); }
+          else if (name === "pause") { watched += Date.now() - startedAt; adReport(ad.adId, 2, { watchedTimeInMs: watched }); }
+          else if (name === "resume") { startedAt = Date.now(); adReport(ad.adId, 3, { watchedTimeInMs: watched }); }
+          else if (name === "finish") { watched += startedAt ? Date.now() - startedAt : 0; adReport(ad.adId, 4, { watchedTimeInMs: watched }).then(resolve); }
+          else if (name === "error") { adReport(ad.adId, 5, { cancelReason: (d && d.reason) || "AD_PLAYBACK_ERROR", watchedTimeInMs: watched }).then(resolve); }
+        };
+        try { o.playAd(ad, ev); } catch (e) { ev("error", { reason: String(e.message || e) }); }
+      });
+    };
     for (let i = 0; i < 400 && !stopped; i++) {
+      if (sess.sessionAdsRequired && Array.isArray(sess.sessionAds) && o.playAd && !adBusy) {
+        const ad = sess.sessionAds.find((a) => a && a.adState !== 5 && a.adState !== 6 && !adDone.has(a.adId));
+        if (ad) { adBusy = true; log("[ads] playing", ad.adId, ad.adLengthInSeconds + "s"); runAd(ad).finally(() => { adBusy = false; }); }
+      } else if (sess.sessionAdsRequired && !adBusy && i % 10 === 0) log("[ads] required but none listed yet");
       const q = sess.seatSetupInfo && sess.seatSetupInfo.queuePosition;
       if (sess.status === 2 || sess.status === 3) break;
       if (sess.status === 6 || sess.status === 7) throw new Error("Session ended while starting (status " + sess.status + ")");
       const sig = sess.status + "/" + JSON.stringify(sess.seatSetupInfo || {});
       if (sig !== lastSig) { lastSig = sig; log("[stream] poll status", sess.status, "seat", JSON.stringify(sess.seatSetupInfo || {}), "errorCode", sess.errorCode); }
-      status(q > 0 ? "In queue — position " + q : "Setting up your rig… (" + Math.round((Date.now() - t0) / 1000) + "s)");
-      await sleep(2000);
+      if (!adBusy) status(q > 0 ? "In queue — position " + q : "Setting up your rig… (" + Math.round((Date.now() - t0) / 1000) + "s)");
+      await sleep(sess.sessionAdsRequired ? 3000 : 2000);
       const p = await call("GET", "/v2/session/" + sessionId);
       const rq = p.json.requestStatus || {};
       if (p.json.session) sess = p.json.session;
