@@ -1,0 +1,1 @@
+import{Ma as t}from"./chunk-TS2MXJ5K.js";import{sc as e}from"./chunk-ARDZYBBY.js";var o=class{static composeRequestHeader(r){return new e({"Content-Type":"application/json",Authorization:t.createBearerTokenAuth(r)})}};export{o as a};

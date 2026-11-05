@@ -1,0 +1,1 @@
+var c=class{static buildResetOauthUrl(t,r,n=null){let e=t+"?key="+encodeURIComponent(r);return n!=null&&(e=e+"&prompt="+encodeURIComponent(n)),e}static buildCheckAccountUrl(t,r,n){let e=new URLSearchParams({key:r,q:JSON.stringify(n)});return`${t}?${e.toString()}`}};export{c as a};
