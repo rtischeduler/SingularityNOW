@@ -78,6 +78,11 @@ body.app{display:block;padding:0}body.app main{width:100%}
 #lib-more{margin:20px auto 0;width:200px}#lib-sentinel{height:1px}
 @media(max-width:640px){.logo{font-size:0}.logo i{font-size:1rem}.top{gap:12px}}
 @media (prefers-reduced-motion:reduce){.game,.hero-bg,.game.sk{animation:none}.game{transition:none}}
+#player{position:fixed;inset:0;z-index:100;background:#000;display:flex;align-items:center;justify-content:center}#player[hidden]{display:none}
+#pv{width:100%;height:100%;object-fit:contain;background:#000;outline:none}
+#pstatus{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:1.2rem;padding:24px;pointer-events:none;text-shadow:0 2px 12px #000;background:radial-gradient(500px 300px at 50% 50%,rgba(118,185,0,.18),transparent 70%)}#pstatus:empty{display:none}
+.pbar{position:absolute;top:14px;right:14px;display:flex;gap:10px;opacity:.0;transition:opacity .2s}#player:hover .pbar,.pbar:focus-within{opacity:1}.pbar .btn{padding:9px 14px}
+#phint{position:absolute;bottom:14px;left:50%;translate:-50% 0;font-size:.8rem;color:#c3ccd4;background:rgba(0,0,0,.55);padding:5px 12px;border-radius:999px;pointer-events:none;opacity:0;transition:opacity .3s}#player:hover #phint{opacity:1}
 </style>
 </head>
 <body>
@@ -140,6 +145,7 @@ body.app{display:block;padding:0}body.app main{width:100%}
 <pre id="log"></pre>
 <button class="btn ghost" id="copy-log" type="button">Copy log</button>
 </details>
+<div id="player" hidden><video id="pv" autoplay playsinline muted></video><div id="pstatus"></div><div class="pbar"><button class="btn ghost" id="pfs" type="button">Fullscreen</button><button class="btn" id="pstop" type="button">Exit game</button></div><div id="phint">Click the video to capture mouse and keyboard. Press Esc to release.</div></div>
 <script type="module">
 const BAD_KEY = "WB_BAD";
 const BAD_TTL_MS = 6 * 3600000;
@@ -937,7 +943,7 @@ async function fetchApps(session, search, cursor) {
   const a = j.data && j.data.apps;
   if (!a) throw new Error("GeForce NOW returned no game list");
   return {
-    items: (a.items || []).map((g) => ({ id: g.id, title: g.title, img: g.images && (g.images.TV_BANNER || g.images.HERO_IMAGE), hero: g.images && (g.images.HERO_IMAGE || g.images.TV_BANNER), playable: g.gfn && g.gfn.playabilityState, tier: g.gfn && g.gfn.minimumMembershipTierLabel, store: (g.variants || []).map((v) => v.appStore).filter(Boolean)[0] })),
+    items: (a.items || []).map((g) => ({ id: g.id, title: g.title, img: g.images && (g.images.TV_BANNER || g.images.HERO_IMAGE), hero: g.images && (g.images.HERO_IMAGE || g.images.TV_BANNER), playable: g.gfn && g.gfn.playabilityState, vid: (() => { const vs = g.variants || [], v = vs.find((x) => x.gfn && x.gfn.library && x.gfn.library.selected) || vs[0]; return v && /^\d+$/.test(String(v.id)) ? v.id : null; })(), tier: g.gfn && g.gfn.minimumMembershipTierLabel, store: (g.variants || []).map((v) => v.appStore).filter(Boolean)[0] })),
     next: a.pageInfo && a.pageInfo.hasNextPage ? a.pageInfo.endCursor : "",
     total: a.pageInfo && a.pageInfo.totalCount,
   };
@@ -963,6 +969,8 @@ function drawGames(items, append) {
     const d = document.createElement("div");
     d.className = "game";
     d.tabIndex = 0;
+    d.onclick = () => launch(g);
+    d.onkeydown = (ev) => { if (ev.key === "Enter") launch(g); };
     d.style.animationDelay = Math.min(n, 20) * 18 + "ms";
     if (g.img) { const i = document.createElement("img"); i.loading = "lazy"; i.referrerPolicy = "no-referrer"; i.alt = ""; i.src = g.img; i.onerror = () => i.remove(); d.appendChild(i); }
     if (g.store) { const t = document.createElement("span"); t.className = "tag"; t.textContent = g.store; d.appendChild(t); }
@@ -1028,6 +1036,45 @@ async function loadLibrary(session, append) {
     $("lib-status").textContent = "Couldn’t load games: " + (e.message || e) + " (see debug log)";
   }
 }
+
+
+let current = null;
+async function launch(g) {
+  if (current) return;
+  const session = loadStore();
+  if (!session) return;
+  const pl = $("player"), pv = $("pv");
+  pl.hidden = false;
+  const st = (t) => { $("pstatus").textContent = t || ""; };
+  st("Starting " + (g.title || "game") + "…");
+  try {
+    const tokens = await gfnTokens(session);
+    if (!tokens.length) throw new Error("No GeForce NOW token available");
+    const token = tokens[0];
+    const vpcId = await findVpc(session);
+    const { startStream } = await import("./stream.js");
+    current = await startStream({
+      appId: g.vid || g.id, vpcId, deviceId: JARVIS_DEVICE, video: pv, log, status: st,
+      headers: () => gfnHeaders(token), http, getLibcurl: async () => (await window.__getProxy({ log, say })).libcurl,
+      width: Math.min(1920, screen.width * (devicePixelRatio || 1)) | 0 || 1920, height: Math.min(1080, screen.height * (devicePixelRatio || 1)) | 0 || 1080, fps: 60,
+    });
+  } catch (e) {
+    log("[stream] launch failed", e.message || e);
+    st("Couldn’t start the game: " + (e.message || e));
+    current = { stop: async () => {} };
+    setTimeout(() => { if (current && $("pstatus").textContent.startsWith("Couldn")) closePlayer(); }, 6000);
+  }
+}
+async function closePlayer() {
+  const c = current;
+  current = null;
+  $("player").hidden = true;
+  $("pstatus").textContent = "";
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  if (c) await c.stop();
+}
+$("pstop").addEventListener("click", closePlayer);
+$("pfs").addEventListener("click", () => { const p = $("player"); (document.fullscreenElement ? document.exitFullscreen() : p.requestFullscreen()).catch(() => {}); });
 
 let libTimer = 0;
 const libSession = () => loadStore();
