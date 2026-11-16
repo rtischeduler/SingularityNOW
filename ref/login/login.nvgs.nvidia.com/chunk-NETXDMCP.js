@@ -1,0 +1,1 @@
+import{R as c}from"./chunk-ARDZYBBY.js";var s=(()=>{let t=class t{canDeactivate(e,a,i,n){return new RegExp("^(/v1)/error","i").test(n.url)?!0:e.canDeactivate?e.canDeactivate():!0}};t.\u0275fac=function(a){return new(a||t)},t.\u0275prov=c({token:t,factory:t.\u0275fac});let r=t;return r})();export{s as a};

@@ -1,0 +1,1 @@
+import{R as a}from"./chunk-ARDZYBBY.js";var n=(()=>{let t=class t{constructor(){}resolve(e){return e.queryParams.key}};t.\u0275fac=function(c){return new(c||t)},t.\u0275prov=a({token:t,factory:t.\u0275fac});let r=t;return r})();export{n as a};

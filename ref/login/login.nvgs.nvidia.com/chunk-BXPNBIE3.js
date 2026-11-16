@@ -1,0 +1,1 @@
+var e={dialog:"dialog",consent:"consent",emailVerification:"email-verification",changeEmail:"change-email",emailChangeComplete:"complete-change-email",emailChangeCompleteSubPath:"complete",verifyPassword:"password-verification",nfactorVerification:"nfactor-verification",nfactorSetup:"auth-factor-setup",passkey:"passkey"};export{e as a};
