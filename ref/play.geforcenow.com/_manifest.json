@@ -195,8 +195,8 @@
       "bytes": 638
     },
     {
-      "url": "https://play.geforcenow.com/mall/runtime.e351e120ca076543.js",
-      "file": "ref/play.geforcenow.com/mall/runtime.e351e120ca076543.js",
+      "url": "https://play.geforcenow.com/mall/runtime.d4ed7d601b6cde29.js",
+      "file": "ref/play.geforcenow.com/mall/runtime.d4ed7d601b6cde29.js",
       "type": "text/javascript",
       "bytes": 6180
     },
@@ -207,16 +207,16 @@
       "bytes": 66763
     },
     {
-      "url": "https://play.geforcenow.com/mall/vendor.f74801560d6f59e0.js",
-      "file": "ref/play.geforcenow.com/mall/vendor.f74801560d6f59e0.js",
+      "url": "https://play.geforcenow.com/mall/vendor.e1a80025a8f1af59.js",
+      "file": "ref/play.geforcenow.com/mall/vendor.e1a80025a8f1af59.js",
       "type": "text/javascript",
-      "bytes": 3530498
+      "bytes": 3530504
     },
     {
-      "url": "https://play.geforcenow.com/mall/main.0905e658be5f9a9c.js",
-      "file": "ref/play.geforcenow.com/mall/main.0905e658be5f9a9c.js",
+      "url": "https://play.geforcenow.com/mall/main.abfe8f990193a23e.js",
+      "file": "ref/play.geforcenow.com/mall/main.abfe8f990193a23e.js",
       "type": "text/javascript",
-      "bytes": 4072031
+      "bytes": 4072976
     },
     {
       "url": "https://play.geforcenow.com/mall/assets/hashed/NVIDIASans_W_Rg.33fb51adcc625f4e.woff2",
@@ -432,7 +432,7 @@
       "url": "https://play.geforcenow.com/mall/shared/assets/config/config.json",
       "file": "ref/play.geforcenow.com/mall/shared/assets/config/config.json",
       "type": "application/json",
-      "bytes": 46352
+      "bytes": 46453
     },
     {
       "url": "https://play.geforcenow.com/mall/assets/img/avatar_generic_118.svg",
@@ -759,10 +759,10 @@
       "bytes": 58340
     },
     {
-      "url": "https://play.geforcenow.com/mall/829.d6c2b8666c6bacba.js",
-      "file": "ref/play.geforcenow.com/mall/829.d6c2b8666c6bacba.js",
+      "url": "https://play.geforcenow.com/mall/829.11602e494167e6ab.js",
+      "file": "ref/play.geforcenow.com/mall/829.11602e494167e6ab.js",
       "type": "text/javascript",
-      "bytes": 857222
+      "bytes": 858113
     },
     {
       "url": "https://play.geforcenow.com/mall/701.4acf2ebe91e4095b.js",
@@ -783,10 +783,10 @@
       "bytes": 40485
     },
     {
-      "url": "https://play.geforcenow.com/mall/633.daaf70270b64e7ff.js",
-      "file": "ref/play.geforcenow.com/mall/633.daaf70270b64e7ff.js",
+      "url": "https://play.geforcenow.com/mall/633.ac64ced56e6945d0.js",
+      "file": "ref/play.geforcenow.com/mall/633.ac64ced56e6945d0.js",
       "type": "text/javascript",
-      "bytes": 123836
+      "bytes": 123830
     },
     {
       "url": "https://play.geforcenow.com/mall/552.96b92f0e23c527c2.js",
@@ -795,10 +795,10 @@
       "bytes": 2558
     },
     {
-      "url": "https://play.geforcenow.com/mall/540.3be56005242bb901.js",
-      "file": "ref/play.geforcenow.com/mall/540.3be56005242bb901.js",
+      "url": "https://play.geforcenow.com/mall/540.b04fe26924997198.js",
+      "file": "ref/play.geforcenow.com/mall/540.b04fe26924997198.js",
       "type": "text/javascript",
-      "bytes": 68664
+      "bytes": 69198
     },
     {
       "url": "https://play.geforcenow.com/mall/531.4e6cae6375c26b35.js",
@@ -861,10 +861,10 @@
       "bytes": 38551
     },
     {
-      "url": "https://play.geforcenow.com/mall/33.185674a2719e8a20.js",
-      "file": "ref/play.geforcenow.com/mall/33.185674a2719e8a20.js",
+      "url": "https://play.geforcenow.com/mall/33.aa83ccef0077171a.js",
+      "file": "ref/play.geforcenow.com/mall/33.aa83ccef0077171a.js",
       "type": "text/javascript",
-      "bytes": 2317797
+      "bytes": 2318997
     },
     {
       "url": "https://play.geforcenow.com/mall/25.f8951c15ada560cd.js",
